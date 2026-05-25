@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praneel's Placement Battle Plan — Target MBB</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ACCESSIBILITY UPGRADE: 40% Larger Text & Brighter Colors */
+:root {
+  --bg: #050714;
+  --card: #0d1128;
+  --card2: #151b3d;
+  --border: #232d66;
+  
+  /* Brighter, High-Contrast Neon Colors */
+  --green: #22ff00;    /* Hyper Green */
+  --orange: #ff9100;   /* Bright Orange */
+  --blue: #00e5ff;     /* Cyan */
+  --purple: #e066ff;   /* Bright Pink/Purple */
+  --yellow: #ffee00;   /* Neon Yellow */
+  --red: #ff2a55;      /* Hot Red */
+  
+  --text: #ffffff;     /* Pure White text */
+  --muted: #aeb8d1;    /* Brighter Muted Text */
+  
+  --fs-base: 24px;     /* +40% increase from standard 16px */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: var(--fs-base); }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.6; min-height: 100vh;
+}
+
+/* ===== HEADER & BLUEPRINT ===== */
+.header {
+  background: linear-gradient(135deg, #0a0d2b 0%, #151b3d 100%);
+  border-bottom: 3px solid var(--green);
+  padding: 2rem; position: relative; z-index: 100;
+  box-shadow: 0 10px 40px rgba(34, 255, 0, 0.15);
+}
+.header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.header h1 { font-family: 'Orbitron', monospace; font-size: 1.8rem; color: var(--green); text-shadow: 0 0 15px rgba(34,255,0,0.4); }
+.header p { color: var(--blue); font-size: 0.9rem; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-top: 0.5rem; }
+
+.blueprint-panel {
+  background: rgba(0, 229, 255, 0.05); border: 2px solid var(--blue);
+  border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem;
+}
+.blueprint-title { font-family: 'Orbitron', monospace; color: var(--blue); font-size: 1.1rem; margin-bottom: 1rem; }
+.blueprint-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; font-size: 0.85rem; }
+.bp-col h3 { color: var(--yellow); font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,238,0,0.3); padding-bottom: 0.3rem;}
+.bp-col ul { list-style: none; }
+.bp-col li { margin-bottom: 0.4rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem;}
+.bp-col li::before { content: '▹'; color: var(--green); font-weight: bold; }
+.bp-col.trajectory { background: rgba(255,238,0,0.05); padding: 1rem; border-radius: 8px; border: 1px dashed var(--yellow); }
+.bp-col.trajectory li { color: var(--text); font-weight: 600; }
+.bp-col.trajectory li::before { content: '↓'; color: var(--yellow); }
+
+/* ===== PROGRESS BAR ===== */
+.overall-progress { margin-top: 2rem; }
+.progress-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; font-family: 'IBM Plex Mono', monospace; font-weight: 700;}
+.progress-label span:first-child { color: var(--green); }
+.progress-label span:last-child { color: var(--yellow); font-size: 1.2rem; }
+.progress-bar-bg { background: #1a1f45; border-radius: 12px; height: 24px; overflow: hidden; border: 2px solid var(--border); }
+.progress-bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--blue), var(--green)); transition: width 0.5s ease; }
+
+.stats-row { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+.stat-pill { background: rgba(255,255,255,0.08); border: 2px solid var(--border); border-radius: 30px; padding: 0.5rem 1.2rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; color: var(--text); font-weight: 600;}
+.stat-pill span { color: var(--green); font-weight: 700; font-size: 1.1rem; }
+
+/* ===== TABS ===== */
+.tabs-container { background: var(--card); border-bottom: 3px solid var(--border); padding: 0 2rem; overflow-x: auto; position: sticky; top: 0; z-index: 90;}
+.tabs { display: flex; gap: 0.5rem; min-width: max-content; }
+.tab-btn {
+  background: none; border: none; cursor: pointer; padding: 1.2rem 1.5rem; font-size: 1rem; font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace; color: var(--muted); border-bottom: 4px solid transparent; transition: all 0.2s;
+}
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.tab-btn.active { color: var(--green); border-bottom-color: var(--green); background: rgba(34,255,0,0.1); }
+.tab-progress { font-size: 0.85rem; color: var(--yellow); margin-left: 0.5rem; }
+
+/* ===== MAIN CONTENT ===== */
+.main { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+.week-panel { display: none; }
+.week-panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.week-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; padding: 1.5rem; background: var(--card); border-radius: 16px; border-left: 6px solid var(--green); }
+.week-title { font-family: 'Orbitron', monospace; font-size: 1.5rem; color: var(--green); }
+.week-subtitle { color: var(--text); font-size: 1rem; font-family: 'IBM Plex Mono', monospace; margin-top: 0.5rem; font-weight: 500;}
+
+/* ===== DAY CARDS ===== */
+.day-card { background: var(--card); border: 2px solid var(--border); border-radius: 16px; margin-bottom: 1.5rem; overflow: hidden; transition: border-color 0.2s; }
+.day-card:hover { border-color: rgba(34,255,0,0.4); }
+.day-card.completed { border-color: rgba(34,255,0,0.8); background: rgba(34,255,0,0.02); }
+
+.day-header { display: flex; align-items: center; gap: 1.5rem; padding: 1.2rem 1.5rem; cursor: pointer; user-select: none; background: var(--card2); }
+.day-header:hover { background: #1c2452; }
+.day-number { font-family: 'Orbitron', monospace; font-size: 1.6rem; color: var(--green); min-width: 60px; }
+.day-info { flex: 1; }
+.day-title { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+.day-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; color: var(--muted); margin-top: 0.4rem; font-weight: 600;}
+
+.day-badge { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; padding: 0.4rem 0.8rem; border-radius: 12px; border: 2px solid; font-weight: 700;}
+.day-progress { font-family: 'IBM Plex Mono', monospace; font-size: 1.1rem; color: var(--yellow); font-weight: bold; min-width: 60px; text-align: right;}
+.day-chevron { color: var(--blue); font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;}
+.day-card.open .day-chevron { transform: rotate(180deg); }
+.day-body { display: none; padding: 1.5rem; border-top: 2px solid var(--border); }
+.day-card.open .day-body { display: block; }
+
+.day-tip { background: rgba(0, 229, 255, 0.1); border: 2px solid rgba(0, 229, 255, 0.3); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; font-size: 1rem; color: #fff; font-weight: 500; }
+.day-tip strong { color: var(--blue); font-family: 'Orbitron', monospace; letter-spacing: 1px; }
+
+/* ===== TASK ITEMS ===== */
+.section { margin-bottom: 2rem; }
+.section-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--border); }
+.section-title { font-size: 1.2rem; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+.section.morning .section-title { color: var(--yellow); }
+.section.afternoon .section-title { color: var(--orange); }
+.section.evening .section-title { color: var(--purple); }
+
+.task-item { display: flex; align-items: flex-start; gap: 1rem; padding: 0.8rem 1rem; border-radius: 12px; margin-bottom: 0.6rem; background: rgba(255,255,255,0.03); border: 2px solid transparent; transition: all 0.2s; cursor: pointer; }
+.task-item:hover { background: rgba(255,255,255,0.08); border-color: var(--border); }
+.task-item.done { background: rgba(34,255,0,0.08); border-color: rgba(34,255,0,0.3); }
+
+/* ACCESSIBILITY: Larger Checkboxes */
+.task-cb { 
+  width: 32px; height: 32px; min-width: 32px; border-radius: 8px; border: 3px solid var(--muted); 
+  background: transparent; cursor: pointer; appearance: none; -webkit-appearance: none; 
+  position: relative; transition: all 0.2s; margin-top: 0.2rem;
+}
+.task-cb:checked { background: var(--green); border-color: var(--green); }
+.task-cb:checked::after { content: '✔'; position: absolute; top: -2px; left: 5px; color: #000; font-size: 22px; font-weight: 900; }
+
+.task-label { font-size: 1.1rem; color: var(--text); line-height: 1.5; flex: 1; font-weight: 500; }
+.task-item.done .task-label { color: var(--muted); text-decoration: line-through; }
+
+/* Company tags for Github Repo alignment */
+.company-tag { display: inline-block; font-size: 0.8rem; font-family: 'IBM Plex Mono', monospace; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 6px; margin-right: 0.5rem; background: #2a3052; border: 1px solid #3d4674; color: #fff;}
+.tag-uber { border-color: #ffffff; color: #ffffff; }
+.tag-atl { border-color: #0052CC; color: #0052CC; }
+.tag-deshaw { border-color: #ff2a55; color: #ff2a55; }
+.tag-phonepe { border-color: #b366ff; color: #b366ff; }
+.tag-swiggy { border-color: #ff9100; color: #ff9100; }
+.tag-razorpay { border-color: #02a4ff; color: #02a4ff; }
+.tag-samsung { border-color: #4d79ff; color: #4d79ff; }
+.tag-mmt { border-color: #ff4d4d; color: #ff4d4d; }
+.tag-tekion { border-color: #22ff00; color: #22ff00; }
+
+.task-type { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; padding: 0.2rem 0.8rem; border-radius: 8px; white-space: nowrap; font-weight: 700; align-self: center;}
+.type-lc { background: rgba(0, 229, 255, 0.15); color: var(--blue); border: 2px solid var(--blue); }
+.type-study { background: rgba(255, 238, 0, 0.15); color: var(--yellow); border: 2px solid var(--yellow); }
+.type-core { background: rgba(224, 102, 255, 0.15); color: var(--purple); border: 2px solid var(--purple); }
+.type-mock { background: rgba(255, 42, 85, 0.15); color: var(--red); border: 2px solid var(--red); }
+
+@media (max-width: 800px) {
+  html { font-size: 20px; } /* Slightly smaller but still highly readable on mobile */
+  .blueprint-grid { grid-template-columns: 1fr; }
+  .header { padding: 1.5rem; }
+  .tabs-container { padding: 0 1rem; }
+  .main { padding: 1rem; }
+  .day-header { flex-wrap: wrap; }
+}
+
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+</style>
+</head>
+<body>
+
+<!-- STRATEGIC HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>⚡ PRANEEL'S MBB TRAJECTORY PLANNER</h1>
+      <p>// 61 Days | Github Company-Wise Integration | LocalStorage Enabled</p>
+    </div>
+  </div>
+
+  <div class="blueprint-panel">
+    <div class="blueprint-title">🎯 THE STRATEGIC BLUEPRINT</div>
+    <div class="blueprint-grid">
+      <div class="bp-col trajectory">
+        <h3>🚀 IDEAL TARGET SEQUENCE</h3>
+        <ul>
+          <li>1. Tier-1 Tech / ZS Analytics Track</li>
+          <li>2. High Ownership + Measurable Impact</li>
+          <li>3. IIM ABC / ISB (MBA)</li>
+          <li>4. MBB Final Placements</li>
+        </ul>
+      </div>
+      <div class="bp-col">
+        <h3>⭐ HIGHEST PRIORITY TARGETS</h3>
+        <ul>
+          <li>Uber, Atlassian</li>
+          <li>DE Shaw, Sprinklr</li>
+          <li>Flipkart, PhonePe</li>
+          <li>Razorpay, Swiggy</li>
+        </ul>
+      </div>
+      <div class="bp-col">
+        <h3>📊 CONSULTING & PRODUCT ALIGNMENT</h3>
+        <ul>
+          <li>ZS Associates, Deloitte</li>
+          <li>AmEx, Goldman Sachs</li>
+          <li>MakeMyTrip, Tekion</li>
+          <li>BNY Mellon, Samsung R&D</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="overall-progress">
+    <div class="progress-label">
+      <span>GLOBAL PROGRESS</span>
+      <span id="overall-pct">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="overall-bar" style="width:0%"></div>
+    </div>
+  </div>
+  
+  <div class="stats-row">
+    <div class="stat-pill">Tasks: <span id="stat-done">0</span> / <span id="stat-total">0</span></div>
+    <div class="stat-pill">Days Conquered: <span id="stat-days">0</span> / 61</div>
+  </div>
+</div>
+
+<!-- WEEK TABS -->
+<div class="tabs-container">
+  <div class="tabs" id="tabs">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="main-content">
+  <!-- Populated by JS -->
+</div>
+
+<script>
+// =====================================================================
+// CURRICULUM DATA - INTEGRATING GITHUB REPO DATA & TARGET COMPANIES
+// =====================================================================
+const DATA = [
+  {
+    week: 1, title: "Arrays & Strings", sub: "PhonePe, Swiggy & Flipkart Fundamentals",
+    days: [
+      {
+        d: 1, title: "Array Basics & Two Pointers", 
+        tip: "PhonePe & MakeMyTrip heavily index on Two Pointers for initial phone screens.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Array iterators, time complexity, and in-place swapping constraints.", type: "study" },
+          { t: "Study: Two Pointer technique (opposite ends vs same direction).", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 1: Two Sum (HashMap O(n))", type: "lc" },
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 11: Container With Most Water", type: "lc" },
+          { t: "<span class='company-tag'>Flipkart</span> LC 121: Best Time to Buy/Sell Stock", type: "lc" },
+          { t: "<span class='company-tag'>ZS</span> LC 26: Remove Duplicates from Sorted Array", type: "lc" }
+        ],
+        e: [
+          { t: "CS Core: Java Memory Model for Arrays vs Objects", type: "core" }
+        ]
+      },
+      {
+        d: 2, title: "Prefix Sum & Subarrays", 
+        tip: "Prefix sums are the backbone of analytical OA questions (ZS, Deloitte).", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Prefix Sum Array logic and continuous sub-array equations.", type: "study" },
+          { t: "Study: Kadane's Algorithm for Maximum Subarray.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag'>AmEx</span> LC 53: Maximum Subarray", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 560: Subarray Sum Equals K", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 238: Product of Array Except Self", type: "lc" },
+          { t: "<span class='company-tag'>AmEx</span> LC 974: Subarray Sums Divisible by K", type: "lc" }
+        ],
+        e: [
+          { t: "CS Core: Difference between pass-by-value and pass-by-reference in Java.", type: "core" }
+        ]
+      },
+      {
+        d: 3, title: "String Manipulation Basics", 
+        tip: "String parsing is essential for Sprinklr and Razorpay.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: ASCII character arrays, StringBuilder, and string immutability in Java.", type: "study" },
+          { t: "Study: Sliding window concept intro for substrings.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 3: Longest Substring Without Repeating", type: "lc" },
+          { t: "<span class='company-tag tag-samsung'>Samsung</span> LC 8: String to Integer (atoi)", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 242: Valid Anagram", type: "lc" },
+          { t: "<span class='company-tag'>Sprinklr</span> LC 49: Group Anagrams", type: "lc" }
+        ],
+        e: [
+          { t: "Write out the exact time complexities for Java String operations (.substring, .split).", type: "study" }
+        ]
+      },
+      {
+        d: 4, title: "Sliding Window Advanced", 
+        tip: "Sprinklr and Atlassian frequently ask Variable-Size Sliding Window problems.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Variable size sliding window template (expand right, shrink left).", type: "study" },
+          { t: "Study: 'At most K' trick for exact count problems.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag'>Sprinklr</span> LC 76: Minimum Window Substring (MUST DO)", type: "lc" },
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 424: Longest Repeating Character Replacement", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 438: Find All Anagrams in a String", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 1004: Max Consecutive Ones III", type: "lc" }
+        ],
+        e: [
+          { t: "Draw a trace of the left/right pointers for LC 76 on paper.", type: "study" }
+        ]
+      },
+      {
+        d: 5, title: "Matrix & 2D Arrays", 
+        tip: "Matrix traversals (Spiral, Rotations) are guaranteed in Samsung and BNY Mellon OAs.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: 2D array coordinates, direction vectors (dx, dy).", type: "study" },
+          { t: "Study: In-place matrix rotation math.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-samsung'>Samsung</span> LC 54: Spiral Matrix", type: "lc" },
+          { t: "<span class='company-tag'>BNY Mellon</span> LC 48: Rotate Image", type: "lc" },
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 73: Set Matrix Zeroes", type: "lc" },
+          { t: "<span class='company-tag tag-samsung'>Samsung</span> LC 240: Search a 2D Matrix II", type: "lc" }
+        ],
+        e: [
+          { t: "Mock Setup: Configure a clean Java IDE environment for upcoming mocks.", type: "study" }
+        ]
+      },
+      {
+        d: 6, title: "Binary Search Deep Dive", 
+        tip: "Binary Search on Answer Space is DE Shaw and Sprinklr's favorite pattern.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Binary search templates (Exact match, Left Boundary, Right Boundary).", type: "study" },
+          { t: "Study: Parametric Search (Binary Search on Answer).", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 33: Search in Rotated Sorted Array", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 153: Find Minimum in Rotated Sorted Array", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 875: Koko Eating Bananas", type: "lc" },
+          { t: "<span class='company-tag'>Sprinklr</span> LC 410: Split Array Largest Sum", type: "lc" }
+        ],
+        e: [
+          { t: "Review CS Core: Thread Lifecycle in Java OS concepts.", type: "core" }
+        ]
+      },
+      {
+        d: 7, title: "MOCK: Arrays, Strings, Matrices", 
+        tip: "First simulation. Strict 90 mins. Treat this like the real PhonePe / Razorpay OA.", badge: "🔥 MOCK",
+        m: [
+          { t: "Review all templates: Sliding window, Binary Search, Prefix Sum.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: Subarray Sums (Medium)", type: "mock" },
+          { t: "MOCK Q2: Matrix Spiral Traversal (Medium)", type: "mock" },
+          { t: "MOCK Q3: Binary Search on Answer (Hard)", type: "mock" }
+        ],
+        e: [
+          { t: "Analyze mock failures. Which question took > 30 mins?", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 2, title: "Linked Lists, Stacks & Queues", sub: "Atlassian & Uber Classics",
+    days: [
+      {
+        d: 8, title: "Linked List Core", 
+        tip: "MakeMyTrip loves Linked List reversal and cycle detection.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Fast and Slow Pointers (Floyd's Cycle Detection).", type: "study" },
+          { t: "Study: Dummy Head technique for merging/inserting.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 206: Reverse Linked List", type: "lc" },
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 141: Linked List Cycle", type: "lc" },
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 21: Merge Two Sorted Lists", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 143: Reorder List", type: "lc" }
+        ],
+        e: [
+          { t: "CS Core: HashMap internals in Java (Hashing, Collisions, Treeification).", type: "core" }
+        ]
+      },
+      {
+        d: 9, title: "Linked List Advanced", 
+        tip: "Atlassian LFU Cache uses Doubly Linked Lists.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Doubly Linked List implementation from scratch.", type: "study" },
+          { t: "Study: Reversing sub-lists (k-groups).", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 2: Add Two Numbers", type: "lc" },
+          { t: "<span class='company-tag'>Flipkart</span> LC 23: Merge k Sorted Lists", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 25: Reverse Nodes in k-Group", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 146: LRU Cache (Must memorize architecture)", type: "lc" }
+        ],
+        e: [
+          { t: "Code an LRU Cache without looking at hints.", type: "study" }
+        ]
+      },
+      {
+        d: 10, title: "Stack Basics & Parsing", 
+        tip: "Stack parsing problems are very common in MakeMyTrip and Tekion.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: LIFO logic, valid parenthesis algorithms.", type: "study" },
+          { t: "Study: Postfix evaluation, basic calculator logic.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag'>BNY Mellon</span> LC 20: Valid Parentheses", type: "lc" },
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 155: Min Stack", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 150: Evaluate Reverse Polish Notation", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 394: Decode String", type: "lc" }
+        ],
+        e: [
+          { t: "System Design Prep: Intro to Rate Limiting (Atlassian prep).", type: "core" }
+        ]
+      },
+      {
+        d: 11, title: "Monotonic Stacks", 
+        tip: "DE Shaw and Flipkart use Monotonic Stacks to filter top candidates.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Monotonic increasing/decreasing stack theory.", type: "study" },
+          { t: "Study: Next Greater Element logic.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 739: Daily Temperatures", type: "lc" },
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 496: Next Greater Element I", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 84: Largest Rectangle in Histogram (CRITICAL)", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 85: Maximal Rectangle", type: "lc" }
+        ],
+        e: [
+          { t: "Draw the stack state transition for Largest Rectangle in Histogram.", type: "study" }
+        ]
+      },
+      {
+        d: 12, title: "Queues & Deques", 
+        tip: "Sliding window maximum with Deque is a top-tier company favorite.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Queue vs Deque. Implementation of Deque using arrays.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag'>Sprinklr</span> LC 239: Sliding Window Maximum (Deque)", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 622: Design Circular Queue", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 346: Moving Average from Data Stream", type: "lc" },
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 933: Number of Recent Calls", type: "lc" }
+        ],
+        e: [
+          { t: "CS Core: Differences between TCP and UDP protocols (CN).", type: "core" }
+        ]
+      },
+      {
+        d: 13, title: "CS CORE: OOPs Deep Dive", 
+        tip: "DE Shaw, Morgan Stanley, and Atlassian ask deep OOPs questions.", badge: "🟣 CS CORE",
+        m: [
+          { t: "Study: Abstraction vs Encapsulation. Interface vs Abstract Class.", type: "core" },
+          { t: "Study: Polymorphism (Compile time vs Runtime). Overriding rules.", type: "core" }
+        ],
+        a: [
+          { t: "Code: Design a Parking Lot in Java (Classes, Enums, Interfaces).", type: "study" },
+          { t: "Code: Design an Elevator System.", type: "study" },
+          { t: "Study: SOLID Principles and explain each with an example.", type: "core" }
+        ],
+        e: [
+          { t: "Review Java final, finally, finalize keywords.", type: "core" }
+        ]
+      },
+      {
+        d: 14, title: "MOCK: Stacks, LL, OOP", 
+        tip: "Simulate an Atlassian technical screen.", badge: "🔥 MOCK",
+        m: [
+          { t: "Review LRU Cache and Monotonic Stack templates.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: Reverse k-group Linked List", type: "mock" },
+          { t: "MOCK Q2: Next Greater Element variant", type: "mock" },
+          { t: "MOCK Q3: Design hit counter (OOP + Queue)", type: "mock" }
+        ],
+        e: [
+          { t: "REST Day. You've completed 2 weeks of intense prep.", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 3, title: "Trees & BSTs", sub: "DE Shaw & MakeMyTrip Favorites",
+    days: [
+      {
+        d: 15, title: "Tree Traversals & Depth", 
+        tip: "Recursion fundamentals. PhonePe and Swiggy expect bug-free tree code.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Inorder, Preorder, Postorder (Recursive + Iterative).", type: "study" },
+          { t: "Study: BFS Level Order Traversal using Queues.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 102: Binary Tree Level Order Traversal", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 104: Maximum Depth of Binary Tree", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 199: Binary Tree Right Side View", type: "lc" },
+          { t: "<span class='company-tag'>Flipkart</span> LC 103: Binary Tree Zigzag Level Order", type: "lc" }
+        ],
+        e: [
+          { t: "Code an iterative Inorder traversal without looking at notes.", type: "study" }
+        ]
+      },
+      {
+        d: 16, title: "Tree Path Problems", 
+        tip: "Path Sums and Diameters are everywhere. Crucial for Sprinklr.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Returning values up the recursive stack vs using global state.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 236: Lowest Common Ancestor", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 543: Diameter of Binary Tree", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 124: Binary Tree Maximum Path Sum (Hard)", type: "lc" },
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 113: Path Sum II", type: "lc" }
+        ],
+        e: [
+          { t: "Trace Maximum Path Sum logic recursively on paper.", type: "study" }
+        ]
+      },
+      {
+        d: 17, title: "Binary Search Trees", 
+        tip: "MakeMyTrip and Samsung heavily rely on BST properties.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: BST properties (Inorder is sorted).", type: "study" },
+          { t: "Study: Inserting and Deleting from a BST.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 98: Validate Binary Search Tree", type: "lc" },
+          { t: "<span class='company-tag'>BNY Mellon</span> LC 230: Kth Smallest Element in a BST", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 450: Delete Node in a BST", type: "lc" },
+          { t: "<span class='company-tag tag-samsung'>Samsung</span> LC 108: Convert Sorted Array to BST", type: "lc" }
+        ],
+        e: [
+          { t: "CS Core: OS Process vs Thread differences.", type: "core" }
+        ]
+      },
+      {
+        d: 18, title: "Tree Construction & Serialization", 
+        tip: "Serialization is a classic Uber/Flipkart Hard question.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Building trees from Inorder + Preorder arrays.", type: "study" },
+          { t: "Study: String building for serialization.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 105: Construct BT from Preorder and Inorder", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 297: Serialize and Deserialize Binary Tree", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 426: Convert BST to Sorted Doubly Linked List", type: "lc" },
+          { t: "<span class='company-tag'>Flipkart</span> LC 114: Flatten Binary Tree to Linked List", type: "lc" }
+        ],
+        e: [
+          { t: "Code the Tree Serialization using a Queue (BFS approach).", type: "study" }
+        ]
+      },
+      {
+        d: 19, title: "Tries (Prefix Trees)", 
+        tip: "Sprinklr almost always asks a Trie question in their 3rd OA slot.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: TrieNode structure, insert, and search operations.", type: "study" },
+          { t: "Study: Using Tries for Autocomplete.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag'>Sprinklr</span> LC 208: Implement Trie (Prefix Tree)", type: "lc" },
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 211: Design Add and Search Words Data Structure", type: "lc" },
+          { t: "<span class='company-tag'>Sprinklr</span> LC 212: Word Search II (Trie + DFS)", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 1268: Search Suggestions System", type: "lc" }
+        ],
+        e: [
+          { t: "CS Core: Paging and Virtual Memory in OS.", type: "core" }
+        ]
+      },
+      {
+        d: 20, title: "CS CORE: OS Fundamentals", 
+        tip: "DE Shaw technical interviews have a dedicated OS/DBMS section.", badge: "🟣 CS CORE",
+        m: [
+          { t: "Study: Deadlocks (4 conditions, Banker's Algorithm).", type: "core" },
+          { t: "Study: CPU Scheduling algorithms (FCFS, SJF, RR).", type: "core" }
+        ],
+        a: [
+          { t: "Study: Paging vs Segmentation, TLB, Page Fault handling.", type: "core" },
+          { t: "Study: Mutex vs Semaphore. Producer-Consumer problem.", type: "core" },
+          { t: "Quiz: Solve 15 OS MCQs on GeeksForGeeks.", type: "core" }
+        ],
+        e: [
+          { t: "Link your Transit Booking project to OS concepts (handling concurrent bookings).", type: "study" }
+        ]
+      },
+      {
+        d: 21, title: "MOCK: Trees & OS", 
+        tip: "Simulate a DE Shaw hybrid round (Coding + OS knowledge).", badge: "🔥 MOCK",
+        m: [
+          { t: "Review all Tree traversals, LCA, Serialization logic.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: BST Validation / Kth Smallest", type: "mock" },
+          { t: "MOCK Q2: Maximum Path Sum", type: "mock" },
+          { t: "MOCK Q3: Word Search II (Trie)", type: "mock" },
+          { t: "MOCK Q4: Explain Banker's Algorithm verbally.", type: "mock" }
+        ],
+        e: [
+          { t: "Evaluate your Trie implementation speed. Must be under 15 mins.", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 4, title: "Graphs Core", sub: "Uber, Swiggy & Innovaccer Targets",
+    days: [
+      {
+        d: 22, title: "Graph Fundamentals & BFS", 
+        tip: "Uber and Innovaccer test BFS on grids heavily.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Graph representations (Adjacency List vs Matrix).", type: "study" },
+          { t: "Study: Grid BFS template (directions array, visited matrix).", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 200: Number of Islands", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 994: Rotting Oranges", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 1091: Shortest Path in Binary Matrix", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 542: 01 Matrix", type: "lc" }
+        ],
+        e: [
+          { t: "Code a standard Grid BFS from memory.", type: "study" }
+        ]
+      },
+      {
+        d: 23, title: "DFS & Connected Components", 
+        tip: "Flipkart likes DFS backtracking on grids.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Recursive DFS vs Iterative DFS.", type: "study" },
+          { t: "Study: Cycle detection in undirected graphs.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 695: Max Area of Island", type: "lc" },
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 130: Surrounded Regions", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 323: Number of Connected Components", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 200: Clone Graph", type: "lc" }
+        ],
+        e: [
+          { t: "CS Core: Database Normalization (1NF to BCNF).", type: "core" }
+        ]
+      },
+      {
+        d: 24, title: "Topological Sort", 
+        tip: "Course Schedule is the #1 asked graph problem at PhonePe and Swiggy.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Kahn's Algorithm (In-degree array + Queue).", type: "study" },
+          { t: "Study: DFS approach for Topological Sort.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 207: Course Schedule", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 210: Course Schedule II", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 269: Alien Dictionary (Hard)", type: "lc" },
+          { t: "<span class='company-tag'>Flipkart</span> LC 310: Minimum Height Trees", type: "lc" }
+        ],
+        e: [
+          { t: "Draw out the Alien Dictionary graph logic on paper.", type: "study" }
+        ]
+      },
+      {
+        d: 25, title: "Dijkstra's Algorithm", 
+        tip: "Shortest path on weighted graphs (Uber, Swiggy routing).", badge: "🔴 Hard",
+        m: [
+          { t: "Study: PriorityQueue based Dijkstra. Why it fails on negative weights.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 743: Network Delay Time", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 787: Cheapest Flights Within K Stops", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 1631: Path With Minimum Effort", type: "lc" },
+          { t: "<span class='company-tag'>BNY Mellon</span> LC 1514: Path with Maximum Probability", type: "lc" }
+        ],
+        e: [
+          { t: "Memorize the Java PriorityQueue syntax for Dijkstra: `new PriorityQueue<>((a,b)->a[1]-b[1])`", type: "study" }
+        ]
+      },
+      {
+        d: 26, title: "Union Find (DSU)", 
+        tip: "Disjoint Set Union is a cheat code for many graph problems at Sprinklr.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Path Compression and Union by Rank.", type: "study" },
+          { t: "Study: Kruskal's MST using DSU.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 684: Redundant Connection", type: "lc" },
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 547: Number of Provinces", type: "lc" },
+          { t: "<span class='company-tag'>Sprinklr</span> LC 990: Satisfiability of Equality Equations", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 1319: Number of Operations to Make Network Connected", type: "lc" }
+        ],
+        e: [
+          { t: "Write a reusable DSU class in Java and save it.", type: "study" }
+        ]
+      },
+      {
+        d: 27, title: "CS CORE: DBMS Fundamentals", 
+        tip: "Crucial for Data/Analytics tracks at ZS Associates and Deloitte.", badge: "🟣 CS CORE",
+        m: [
+          { t: "Study: ACID Properties with real-world banking examples.", type: "core" },
+          { t: "Study: Transaction Isolation Levels (Read Uncommitted, Serializable, etc).", type: "core" }
+        ],
+        a: [
+          { t: "Study: B-Trees and Indexing. How databases search so fast.", type: "core" },
+          { t: "Study: SQL vs NoSQL. When to use MongoDB vs PostgreSQL.", type: "core" },
+          { t: "Quiz: Solve 15 DBMS MCQs.", type: "core" }
+        ],
+        e: [
+          { t: "Map your C-Cell SQL Schema. Is it in 3NF? Justify it.", type: "study" }
+        ]
+      },
+      {
+        d: 28, title: "MOCK: Graphs & DBMS", 
+        tip: "Simulate a Swiggy / Innovaccer engineering round.", badge: "🔥 MOCK",
+        m: [
+          { t: "Review Dijkstra and DSU implementations.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: Graph BFS / Connected Components", type: "mock" },
+          { t: "MOCK Q2: Topological Sort", type: "mock" },
+          { t: "MOCK Q3: Dijkstra Algorithm", type: "mock" },
+          { t: "MOCK Q4: Explain indexing and query optimization.", type: "mock" }
+        ],
+        e: [
+          { t: "Check your DSU implementation speed.", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 5, title: "DP Phase 1", sub: "The Ultimate Separator for Tier 1",
+    days: [
+      {
+        d: 29, title: "1D DP & Memoization", 
+        tip: "Dynamic Programming is the gatekeeper for Flipkart, Sprinklr, and Razorpay.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Top-down (Memoization) vs Bottom-up (Tabulation).", type: "study" },
+          { t: "Study: State definition and state transitions.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 70: Climbing Stairs", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 198: House Robber", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 213: House Robber II", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 139: Word Break", type: "lc" }
+        ],
+        e: [
+          { t: "Draw the recursive tree for House Robber to see the overlapping subproblems.", type: "study" }
+        ]
+      },
+      {
+        d: 30, title: "Knapsack Variants", 
+        tip: "0/1 Knapsack is a guaranteed DP archetype in OAs.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: 0/1 Knapsack logic and 2D to 1D space optimization.", type: "study" },
+          { t: "Study: Unbounded Knapsack.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag'>Flipkart</span> LC 416: Partition Equal Subset Sum", type: "lc" },
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 322: Coin Change", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 518: Coin Change II", type: "lc" },
+          { t: "<span class='company-tag'>Sprinklr</span> LC 494: Target Sum", type: "lc" }
+        ],
+        e: [
+          { t: "Write out the 1D space optimized version of 0/1 Knapsack.", type: "study" }
+        ]
+      },
+      {
+        d: 31, title: "2D DP (Grids & Strings)", 
+        tip: "LCS and Grid paths are standard in DE Shaw and MakeMyTrip OAs.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Longest Common Subsequence logic.", type: "study" },
+          { t: "Study: Grid path DP transitions.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 62: Unique Paths", type: "lc" },
+          { t: "<span class='company-tag'>BNY Mellon</span> LC 64: Minimum Path Sum", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 1143: Longest Common Subsequence", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 72: Edit Distance (Hard)", type: "lc" }
+        ],
+        e: [
+          { t: "Draw the 2D DP matrix for Edit Distance on paper.", type: "study" }
+        ]
+      },
+      {
+        d: 32, title: "DP Subsequences", 
+        tip: "LIS is a foundational algorithm you must memorize.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Longest Increasing Subsequence (O(N^2) vs O(N log N)).", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 300: Longest Increasing Subsequence", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 516: Longest Palindromic Subsequence", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 354: Russian Doll Envelopes", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 1312: Minimum Insertion Steps to Make a String Palindrome", type: "lc" }
+        ],
+        e: [
+          { t: "Learn the Binary Search approach for LIS (Patience Sorting).", type: "study" }
+        ]
+      },
+      {
+        d: 33, title: "SQL CORE: Joins & Aggregations", 
+        tip: "ZS Associates explicitly tests complex SQL writing.", badge: "🟢 SQL",
+        m: [
+          { t: "Study: SQL JOINs (INNER, LEFT, RIGHT, FULL, CROSS).", type: "sql" },
+          { t: "Study: GROUP BY, HAVING vs WHERE clauses.", type: "sql" }
+        ],
+        a: [
+          { t: "HackerRank/Leetcode: Solve 10 Easy/Medium SQL queries.", type: "sql" },
+          { t: "LC SQL 175: Combine Two Tables", type: "lc" },
+          { t: "LC SQL 176: Second Highest Salary", type: "lc" },
+          { t: "LC SQL 182: Duplicate Emails", type: "lc" }
+        ],
+        e: [
+          { t: "Write out the SQL execution order (FROM, WHERE, GROUP BY...).", type: "sql" }
+        ]
+      },
+      {
+        d: 34, title: "SQL CORE: Window Functions", 
+        tip: "Analytics roles (Deloitte, ZS, Amex) expect Window Functions.", badge: "🟢 SQL",
+        m: [
+          { t: "Study: ROW_NUMBER(), RANK(), DENSE_RANK().", type: "sql" },
+          { t: "Study: LEAD(), LAG() and OVER(PARTITION BY).", type: "sql" }
+        ],
+        a: [
+          { t: "HackerRank/Leetcode: Solve 5 Advanced Window Function SQLs.", type: "sql" },
+          { t: "LC SQL 185: Department Top 3 Salaries (Hard)", type: "lc" },
+          { t: "LC SQL 262: Trips and Users (Hard)", type: "lc" },
+          { t: "LC SQL 601: Human Traffic of Stadium (Hard)", type: "lc" }
+        ],
+        e: [
+          { t: "Review your C-Cell SQL tables and write a complex join query for it.", type: "sql" }
+        ]
+      },
+      {
+        d: 35, title: "MOCK: ZS Associates Analytics Track", 
+        tip: "Simulate an Analytics/Consulting tech round (DSA + SQL).", badge: "🔥 MOCK",
+        m: [
+          { t: "Review Window functions and DP templates.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: 1D DP (House Robber variant)", type: "mock" },
+          { t: "MOCK Q2: 2D DP (Grid Path variant)", type: "mock" },
+          { t: "MOCK Q3: SQL Hard (Top N per category)", type: "mock" },
+          { t: "MOCK Q4: SQL Medium (Consecutive logins)", type: "mock" }
+        ],
+        e: [
+          { t: "Rest and recover.", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 6, title: "DP Phase 2, Intervals, Backtracking", sub: "Atlassian & PhonePe Preparation",
+    days: [
+      {
+        d: 36, title: "Intervals & Sweep Line", 
+        tip: "Merge Intervals is Uber's absolute favorite topic.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Sorting intervals, checking overlaps.", type: "study" },
+          { t: "Study: Sweep Line algorithm / Meeting Rooms logic with Min-Heap.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 56: Merge Intervals", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 57: Insert Interval", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 252/253: Meeting Rooms I & II", type: "lc" },
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 435: Non-overlapping Intervals", type: "lc" }
+        ],
+        e: [
+          { t: "Write out the custom Comparator logic in Java for sorting 2D arrays.", type: "study" }
+        ]
+      },
+      {
+        d: 37, title: "Backtracking Core", 
+        tip: "Permutations and Combinations. Crucial for DE Shaw.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Backtracking template (Choose, Explore, Un-choose).", type: "study" },
+          { t: "Study: Handling duplicates in subsets.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 46: Permutations", type: "lc" },
+          { t: "<span class='company-tag'>BNY Mellon</span> LC 78: Subsets", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 39: Combination Sum", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 17: Letter Combinations of a Phone Number", type: "lc" }
+        ],
+        e: [
+          { t: "Draw out the entire recursion tree for Subsets of [1,2,3].", type: "study" }
+        ]
+      },
+      {
+        d: 38, title: "Backtracking Hard", 
+        tip: "N-Queens and Word Search are frequent Hard questions.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: Constraint satisfaction and pruning branches.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 79: Word Search", type: "lc" },
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 22: Generate Parentheses", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 51: N-Queens", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 131: Palindrome Partitioning", type: "lc" }
+        ],
+        e: [
+          { t: "Code N-Queens using 1D arrays for diagonals instead of a 2D board.", type: "study" }
+        ]
+      },
+      {
+        d: 39, title: "Greedy Algorithms", 
+        tip: "Greedy proofs are tricky. Know the classics like Jump Game.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Why Greedy works vs DP. Local optimal to global optimal.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 55: Jump Game", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 45: Jump Game II", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 134: Gas Station", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 135: Candy (Hard)", type: "lc" }
+        ],
+        e: [
+          { t: "Prove verbally why the greedy choice in Gas Station works.", type: "study" }
+        ]
+      },
+      {
+        d: 40, title: "Advanced DP (Intervals)", 
+        tip: "Sprinklr Hard round often has an Interval DP question.", badge: "🔴 Hard",
+        m: [
+          { t: "Study: MCM (Matrix Chain Multiplication) pattern.", type: "study" },
+          { t: "Study: 'Burst Balloons' logic (picking the LAST element).", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 312: Burst Balloons (Hard)", type: "lc" },
+          { t: "<span class='company-tag'>Sprinklr</span> LC 1039: Minimum Score Triangulation of Polygon", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 877: Stone Game", type: "lc" },
+          { t: "<span class='company-tag'>Flipkart</span> LC 1000: Minimum Cost to Merge Stones", type: "lc" }
+        ],
+        e: [
+          { t: "Review Interval DP transitions. This is the hardest DP class.", type: "study" }
+        ]
+      },
+      {
+        d: 41, title: "CS CORE: System Design Intro", 
+        tip: "Crucial for Atlassian, Uber, and later MBB tech consulting interviews.", badge: "🟣 CS CORE",
+        m: [
+          { t: "Study: Vertical vs Horizontal Scaling.", type: "core" },
+          { t: "Study: Load Balancers, Consistent Hashing.", type: "core" }
+        ],
+        a: [
+          { t: "Study: CAP Theorem. Eventual Consistency vs Strong Consistency.", type: "core" },
+          { t: "Study: Caching Strategies (Write-through, Write-back, Cache aside).", type: "core" },
+          { t: "Watch: Design URL Shortener (TinyURL) on YouTube.", type: "core" }
+        ],
+        e: [
+          { t: "Relate CAP theorem to your Desportivos live scoreboard project.", type: "study" }
+        ]
+      },
+      {
+        d: 42, title: "MOCK: Uber / Atlassian Sim", 
+        tip: "Simulate a Tier-1 tech round. High expectations on code quality.", badge: "🔥 MOCK",
+        m: [
+          { t: "Review Intervals, Greedy, and Backtracking.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: Merge Intervals variant", type: "mock" },
+          { t: "MOCK Q2: Gas Station / Jump Game variant", type: "mock" },
+          { t: "MOCK Q3: N-Queens or Word Search", type: "mock" },
+          { t: "MOCK Q4: Explain URL Shortener design.", type: "mock" }
+        ],
+        e: [
+          { t: "Critique your code cleanliness and variable naming.", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 7, title: "Heaps, Bit Manipulation, LLD", sub: "Flipkart & DE Shaw Polish",
+    days: [
+      {
+        d: 43, title: "Heaps & Priority Queues", 
+        tip: "Top K elements and Median stream are standard DE Shaw questions.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Heapify, Insert, Delete logic.", type: "study" },
+          { t: "Study: The 'Two Heaps' pattern for medians.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 215: Kth Largest Element in an Array", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 295: Find Median from Data Stream (Hard)", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 692: Top K Frequent Words", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 347: Top K Frequent Elements", type: "lc" }
+        ],
+        e: [
+          { t: "Code a Min-Heap from scratch using a raw Java array.", type: "study" }
+        ]
+      },
+      {
+        d: 44, title: "Bit Manipulation", 
+        tip: "DE Shaw and Samsung love Bit Tricks in their MCQs and OAs.", badge: "🟡 Medium",
+        m: [
+          { t: "Study: XOR properties (x^x = 0). Finding set bits.", type: "study" },
+          { t: "Study: n & (n-1) trick to clear lowest set bit.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 136: Single Number", type: "lc" },
+          { t: "<span class='company-tag'>BNY Mellon</span> LC 191: Number of 1 Bits", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 338: Counting Bits", type: "lc" },
+          { t: "<span class='company-tag tag-samsung'>Samsung</span> LC 268: Missing Number", type: "lc" }
+        ],
+        e: [
+          { t: "Memorize shift operators (<<, >>, >>>) in Java.", type: "study" }
+        ]
+      },
+      {
+        d: 45, title: "LLD: Design Patterns", 
+        tip: "Object Oriented Design rounds happen at Flipkart and PhonePe.", badge: "🟣 CS CORE",
+        m: [
+          { t: "Study: Singleton, Factory, and Builder Patterns.", type: "core" },
+          { t: "Study: Observer and Strategy Patterns.", type: "core" }
+        ],
+        a: [
+          { t: "Code: Implement a Thread-Safe Singleton in Java.", type: "study" },
+          { t: "Code: Implement the Observer pattern (Publish/Subscribe).", type: "study" },
+          { t: "LLD Practice: Design a Movie Ticket Booking System (BookMyShow).", type: "study" }
+        ],
+        e: [
+          { t: "Relate the Strategy Pattern to Java's Comparator interface.", type: "core" }
+        ]
+      },
+      {
+        d: 46, title: "Math & Geometry Basics", 
+        tip: "Occasionally asked in high-tier quant/algo screens (DE Shaw).", badge: "🟡 Medium",
+        m: [
+          { t: "Study: Sieve of Eratosthenes (Primes).", type: "study" },
+          { t: "Study: GCD/Euclidean algorithm, Fast Exponentiation.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-tekion'>Tekion</span> LC 50: Pow(x, n)", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 204: Count Primes", type: "lc" },
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 149: Max Points on a Line (Hard)", type: "lc" },
+          { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 31: Next Permutation", type: "lc" }
+        ],
+        e: [
+          { t: "Write out the Fast Exponentiation logic.", type: "study" }
+        ]
+      },
+      {
+        d: 47, title: "Profile/Resume Narrative Building", 
+        tip: "Aligning your CV for the Consulting/MBB narrative.", badge: "🚀 CAREER",
+        m: [
+          { t: "Review: Check CV bullets. Convert \"Built X\" to \"Delivered Y impact using X\".", type: "study" },
+          { t: "Narrative: Draft your 'Tell me about yourself' focusing on leadership + engineering.", type: "study" }
+        ],
+        a: [
+          { t: "STAR Method: Write out the C-Cell platform story (Challenge, Action, Result).", type: "study" },
+          { t: "STAR Method: Write out the TEDx/DehSaakaar leadership story.", type: "study" },
+          { t: "Research: Read about ZS Associates and Deloitte consulting roles.", type: "study" }
+        ],
+        e: [
+          { t: "Practice your introduction out loud for 5 minutes.", type: "study" }
+        ]
+      },
+      {
+        d: 48, title: "MOCK: DE Shaw / Flipkart Simulation", 
+        badge: "🔥 MOCK",
+        m: [
+          { t: "Review Heaps, Bit Manipulation, Next Permutation.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: Next Permutation variant", type: "mock" },
+          { t: "MOCK Q2: Median from Data Stream", type: "mock" },
+          { t: "MOCK Q3: LLD Design question (e.g. Design Vending Machine)", type: "mock" }
+        ],
+        e: [
+          { t: "Debrief mock. Are your OOP structures clean?", type: "study" }
+        ]
+      },
+      {
+        d: 49, title: "Buffer / Catch-up Day", 
+        tip: "Clear out any unfinished tasks from the week.", badge: "🟢 BUFFER",
+        m: [
+          { t: "Re-attempt any failed Leetcode questions from this week.", type: "lc" }
+        ],
+        a: [
+          { t: "Review CS Core concepts you felt weak on in the mock.", type: "core" }
+        ],
+        e: [
+          { t: "Rest.", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 8, title: "The Final Polish", sub: "Mastering Speed & Edge Cases",
+    days: [
+      {
+        d: 50, title: "Speed Drill: PhonePe & Swiggy Top 5", 
+        badge: "⚡ SPEED",
+        m: [
+          { t: "Mental warm-up: Write out Binary Search and Sliding Window templates.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 42: Trapping Rain Water (Two Pointer vs DP vs Stack)", type: "lc" },
+          { t: "<span class='company-tag tag-swiggy'>Swiggy</span> LC 23: Merge k Sorted Lists", type: "lc" },
+          { t: "<span class='company-tag tag-phonepe'>PhonePe</span> LC 84: Largest Rectangle in Histogram", type: "lc" },
+          { t: "Focus purely on bug-free typing speed today.", type: "study" }
+        ],
+        e: [
+          { t: "Review edge cases for Trapping Rain Water.", type: "study" }
+        ]
+      },
+      {
+        d: 51, title: "Speed Drill: MakeMyTrip & Razorpay Top 5", 
+        badge: "⚡ SPEED",
+        m: [
+          { t: "Mental warm-up: Write out BFS template and Tree traversals.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 146: LRU Cache", type: "lc" },
+          { t: "<span class='company-tag tag-razorpay'>Razorpay</span> LC 200: Number of Islands", type: "lc" },
+          { t: "<span class='company-tag tag-mmt'>MakeMyTrip</span> LC 54: Spiral Matrix", type: "lc" },
+          { t: "Time yourself: Can you do these 3 under 60 minutes combined?", type: "study" }
+        ],
+        e: [
+          { t: "Review LRU Cache node wiring bugs.", type: "study" }
+        ]
+      },
+      {
+        d: 52, title: "Speed Drill: Uber / Atlassian Top 5", 
+        badge: "⚡ SPEED",
+        m: [
+          { t: "Mental warm-up: Write out Dijkstra and Trie templates.", type: "study" }
+        ],
+        a: [
+          { t: "<span class='company-tag tag-uber'>Uber</span> LC 139: Word Break", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 1143: Longest Common Subsequence", type: "lc" },
+          { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 346: Moving Average from Data Stream", type: "lc" },
+          { t: "Ensure code readability is top notch (Atlassian cares heavily about this).", type: "study" }
+        ],
+        e: [
+          { t: "Check variable names. Are they descriptive? (e.g. `leftIndex` instead of `i`)", type: "study" }
+        ]
+      },
+      {
+        d: 53, title: "Company-Specific Strategy: Consulting", 
+        tip: "Deloitte / ZS / Amex Focus.", badge: "🚀 CAREER",
+        m: [
+          { t: "Review: Complex SQL Window Functions and JOINs.", type: "sql" },
+          { t: "Review: Database Normalization, Indexes, and ACID.", type: "core" }
+        ],
+        a: [
+          { t: "Behavioral: Prepare 'Guesstimate' strategies (common in analytics interviews).", type: "study" },
+          { t: "Behavioral: Connect your EmoCam project to a business value proposition.", type: "study" }
+        ],
+        e: [
+          { t: "Mock a 10-minute guesstimate interview with a friend.", type: "mock" }
+        ]
+      },
+      {
+        d: 54, title: "Company-Specific Strategy: Startups/Product", 
+        tip: "PhonePe / Razorpay / Swiggy Focus.", badge: "🚀 CAREER",
+        m: [
+          { t: "Review: High-level System Design (Scalability, Caching, DB Sharding).", type: "core" }
+        ],
+        a: [
+          { t: "Code: Brush up on LLD and clean Object Oriented code.", type: "lld" },
+          { t: "Behavioral: Prepare examples of taking 'ownership' and pushing to production.", type: "study" }
+        ],
+        e: [
+          { t: "Review your C-Cell architecture. Know every component intimately.", type: "study" }
+        ]
+      },
+      {
+        d: 55, title: "MOCK: The Ultimate Gauntlet", 
+        tip: "This is it. 1 Hard, 2 Mediums, SQL, and OS questions.", badge: "🔥 MOCK",
+        m: [
+          { t: "Deep breathing. Final mental review of all templates.", type: "study" }
+        ],
+        a: [
+          { t: "MOCK Q1: LC Hard (Graphs/DP)", type: "mock" },
+          { t: "MOCK Q2: LC Medium (Trees/Two Pointers)", type: "mock" },
+          { t: "MOCK Q3: LC Medium (Matrix/Strings)", type: "mock" },
+          { t: "MOCK Q4: Complex SQL + Explain Deadlocks.", type: "mock" }
+        ],
+        e: [
+          { t: "Full score debrief.", type: "study" }
+        ]
+      },
+      {
+        d: 56, title: "Buffer / Catch-up Day", 
+        badge: "🟢 BUFFER",
+        m: [
+          { t: "Fix any glaring weaknesses from yesterday's mock.", type: "study" }
+        ],
+        a: [
+          { t: "Relax. Don't code anything new.", type: "study" }
+        ],
+        e: [
+          { t: "Sleep.", type: "study" }
+        ]
+      }
+    ]
+  },
+  {
+    week: 9, title: "Launch Week", sub: "Confidence, Communication & Execution",
+    days: [
+      {
+        d: 57, title: "Behavioral & Storytelling", 
+        tip: "MBB trajectory requires stellar communication.", badge: "🚀 CAREER",
+        m: [
+          { t: "Rehearse all STAR stories out loud in front of a mirror.", type: "study" }
+        ],
+        a: [
+          { t: "Prepare 3 thoughtful questions to ask the interviewer.", type: "study" },
+          { t: "Refine your 'Why this company?' answer for Top 5 targets.", type: "study" }
+        ],
+        e: [
+          { t: "Watch mock behavioral interviews on YouTube.", type: "study" }
+        ]
+      },
+      {
+        d: 58, title: "Light Core Review", 
+        badge: "🟣 CS CORE",
+        m: [
+          { t: "Skim OS notes (Paging, Deadlocks, Scheduling).", type: "core" }
+        ],
+        a: [
+          { t: "Skim DBMS notes (Normalisation, Transactions, Indexing).", type: "core" },
+          { t: "Skim CN notes (TCP/UDP, OSI Model).", type: "core" }
+        ],
+        e: [
+          { t: "Read 3 interview experiences on Leetcode Discuss.", type: "study" }
+        ]
+      },
+      {
+        d: 59, title: "Light DSA Review", 
+        badge: "🟡 DSA",
+        m: [
+          { t: "Look at your list of frequently failed questions.", type: "study" }
+        ],
+        a: [
+          { t: "Do NOT code. Just verbally explain the approach to 5 random LC Mediums.", type: "study" }
+        ],
+        e: [
+          { t: "Verify IDE setup, webcam, and microphone for OAs.", type: "study" }
+        ]
+      },
+      {
+        d: 60, title: "The Calm Before", 
+        badge: "🧘 CALM",
+        m: [
+          { t: "Visualize the interview process going perfectly.", type: "study" }
+        ],
+        a: [
+          { t: "Review your MBB/Tier-1 Trajectory plan. Remember the end goal.", type: "study" }
+        ],
+        e: [
+          { t: "Hydrate, eat well, sleep 8 hours.", type: "study" }
+        ]
+      },
+      {
+        d: 61, title: "DAY ZERO: LAUNCH", 
+        badge: "🚀 LAUNCH",
+        m: [
+          { t: "Trust your preparation. You have done 60 days of grueling work.", type: "study" }
+        ],
+        a: [
+          { t: "You are ready for Uber, Atlassian, DE Shaw, Flipkart, and MBB.", type: "study" }
+        ],
+        e: [
+          { t: "Go execute.", type: "study" }
+        ]
+      }
+    ]
+  }
+];
+
+const STORAGE_KEY = 'praneel_placement_v3_tracker';
+let userState = {};
+
+// Load State
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) userState = JSON.parse(raw);
+  } catch(e) { console.error("LocalStorage error", e); }
+}
+
+// Save State
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userState));
+  } catch(e) { console.error("LocalStorage error", e); }
+}
+
+// Generate UI
+function renderUI() {
+  const tabsContainer = document.getElementById('tabs');
+  const mainContainer = document.getElementById('main-content');
+  
+  DATA.forEach((weekData, wIndex) => {
+    // Generate Tab
+    const tab = document.createElement('button');
+    tab.className = `tab-btn ${wIndex === 0 ? 'active' : ''}`;
+    tab.onclick = () => switchTab(wIndex);
+    tab.id = `tab-btn-${wIndex}`;
+    tab.innerHTML = `WEEK ${weekData.week} <span class="tab-progress" id="tab-prog-${wIndex}">0%</span>`;
+    tabsContainer.appendChild(tab);
+
+    // Generate Week Panel
+    const panel = document.createElement('div');
+    panel.className = `week-panel ${wIndex === 0 ? 'active' : ''}`;
+    panel.id = `week-panel-${wIndex}`;
+    
+    let html = `
+      <div class="week-header">
+        <div style="flex:1;">
+          <div class="week-title">WEEK ${weekData.week}: ${weekData.title}</div>
+          <div class="week-subtitle">${weekData.sub}</div>
+        </div>
+      </div>
+    `;
+
+    weekData.days.forEach((day) => {
+      const dayId = day.d;
+      const totalTasks = (day.m?.length||0) + (day.a?.length||0) + (day.e?.length||0);
+      
+      html += `
+        <div class="day-card" id="card-${dayId}" onclick="toggleDay(${dayId})">
+          <div class="day-header">
+            <div class="day-number">D${dayId}</div>
+            <div class="day-info">
+              <div class="day-title">${day.title}</div>
+              <div class="day-meta">${totalTasks} Tasks</div>
+            </div>
+            <div class="day-badge" style="border-color:var(--border); color:var(--text);">${day.badge}</div>
+            <div class="day-progress" id="day-prog-${dayId}">0%</div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-body" id="body-${dayId}" onclick="event.stopPropagation();">
+            ${day.tip ? `<div class="day-tip"><strong>💡 STRATEGY:</strong> ${day.tip}</div>` : ''}
+            
+            ${renderSection(day.m, '☀️ MORNING', dayId, 'm')}
+            ${renderSection(day.a, '⚡ AFTERNOON', dayId, 'a')}
+            ${renderSection(day.e, '🌙 EVENING', dayId, 'e')}
+          </div>
+        </div>
+      `;
+    });
+    
+    panel.innerHTML = html;
+    mainContainer.appendChild(panel);
+  });
+}
+
+function renderSection(items, title, dayId, secCode) {
+  if (!items || items.length === 0) return '';
+  let html = `
+    <div class="section ${secCode === 'm' ? 'morning' : secCode === 'a' ? 'afternoon' : 'evening'}">
+      <div class="section-header">
+        <div class="section-title">${title}</div>
+      </div>
+  `;
+  
+  items.forEach((task, tIndex) => {
+    const taskId = `d${dayId}_${secCode}_${tIndex}`;
+    const isChecked = userState[taskId] ? 'checked' : '';
+    const isDone = userState[taskId] ? 'done' : '';
+    
+    html += `
+      <div class="task-item ${isDone}" id="item-${taskId}" onclick="toggleTask('${taskId}')">
+        <input type="checkbox" class="task-cb" id="cb-${taskId}" ${isChecked} onclick="event.stopPropagation(); toggleTask('${taskId}')">
+        <label class="task-label">${task.t}</label>
+        <span class="task-type type-${task.type.toLowerCase()}">${task.type.toUpperCase()}</span>
+      </div>
+    `;
+  });
+  
+  html += `</div>`;
+  return html;
+}
+
+// Interactions
+function toggleDay(dayId) {
+  const card = document.getElementById(`card-${dayId}`);
+  card.classList.toggle('open');
+}
+
+function toggleTask(taskId) {
+  userState[taskId] = !userState[taskId];
+  saveState();
+  
+  const cb = document.getElementById(`cb-${taskId}`);
+  const item = document.getElementById(`item-${taskId}`);
+  
+  if (cb) cb.checked = userState[taskId];
+  if (userState[taskId]) {
+    item.classList.add('done');
+  } else {
+    item.classList.remove('done');
+  }
+  
+  updateProgress();
+}
+
+function switchTab(wIndex) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.week-panel').forEach(p => p.classList.remove('active'));
+  
+  document.getElementById(`tab-btn-${wIndex}`).classList.add('active');
+  document.getElementById(`week-panel-${wIndex}`).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Progress Calculation
+function updateProgress() {
+  let globalDone = 0;
+  let globalTotal = 0;
+  let daysCompleted = 0;
+
+  DATA.forEach((weekData, wIndex) => {
+    let weekDone = 0;
+    let weekTotal = 0;
+
+    weekData.days.forEach((day) => {
+      let dayDone = 0;
+      let dayTotal = 0;
+      
+      const sections = [{items: day.m, c: 'm'}, {items: day.a, c: 'a'}, {items: day.e, c: 'e'}];
+      sections.forEach(sec => {
+        if(!sec.items) return;
+        sec.items.forEach((_, tIndex) => {
+          dayTotal++;
+          globalTotal++;
+          weekTotal++;
+          const taskId = `d${day.d}_${sec.c}_${tIndex}`;
+          if (userState[taskId]) {
+            dayDone++;
+            globalDone++;
+            weekDone++;
+          }
+        });
+      });
+
+      // Update Day UI
+      const dayPct = dayTotal === 0 ? 0 : Math.round((dayDone / dayTotal) * 100);
+      document.getElementById(`day-prog-${day.d}`).innerText = `${dayPct}%`;
+      
+      const card = document.getElementById(`card-${day.d}`);
+      if (dayPct === 100 && dayTotal > 0) {
+        card.classList.add('completed');
+        daysCompleted++;
+      } else {
+        card.classList.remove('completed');
+      }
+    });
+
+    // Update Week UI
+    const weekPct = weekTotal === 0 ? 0 : Math.round((weekDone / weekTotal) * 100);
+    document.getElementById(`tab-prog-${wIndex}`).innerText = `${weekPct}%`;
+  });
+
+  // Update Global UI
+  const globalPct = globalTotal === 0 ? 0 : Math.round((globalDone / globalTotal) * 100);
+  document.getElementById('overall-pct').innerText = `${globalPct}%`;
+  document.getElementById('overall-bar').style.width = `${globalPct}%`;
+  document.getElementById('stat-done').innerText = globalDone;
+  document.getElementById('stat-total').innerText = globalTotal;
+  document.getElementById('stat-days').innerText = daysCompleted;
+}
+
+// Initialization
+window.onload = () => {
+  loadState();
+  renderUI();
+  updateProgress();
+  
+  // Open Day 1 automatically if no progress
+  if(Object.keys(userState).length === 0) {
+    setTimeout(() => toggleDay(1), 500);
+  }
+};
+</script>
+</body>
+</html>
