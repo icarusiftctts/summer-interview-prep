@@ -168,7 +168,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
 <div class="header">
   <div class="header-top">
     <div>
-      <h1>⚡ TIER-1 PLACEMENT &amp; MBB TRAJECTORY PLANNER</h1>
+      <h1>⚡ PLACEMENT TRAJECTORY PLANNER</h1>
       <p>// 61 Days | Github Company-Wise Integration | Cloud Sync Enabled</p>
     </div>
   </div>
@@ -221,7 +221,21 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
+  // === SHARED ACCOUNT CONFIGURATION ===
+  // PUT YOUR TWO EMAILS HERE
+  const SHARED_EMAILS = ["praneeldev3@gmail.com", "devpraneel@gmail.com"];
+  const SHARED_DOC_ID = "praneel_master_tracker";
+  
   window.currentUid = null;
+  window.currentUserEmail = null;
+
+  // Helper function to route to the correct database document
+  function getTargetDocId() {
+    if (window.currentUserEmail && SHARED_EMAILS.includes(window.currentUserEmail)) {
+      return SHARED_DOC_ID; // Both your emails load the exact same data
+    }
+    return window.currentUid; // Strangers get their own isolated data
+  }
 
   window.login = async () => {
     try { await signInWithPopup(auth, provider); } 
@@ -243,16 +257,18 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
     
     if (user) {
       window.currentUid = user.uid;
+      window.currentUserEmail = user.email; // Capture the email
+      
       loginBtn.innerHTML = `Synced as ${user.email.split('@')[0]}`;
       loginBtn.style.background = "var(--green)";
       logoutBtn.style.display = "inline-flex";
       await fetchCloudState();
     } else {
       window.currentUid = null;
+      window.currentUserEmail = null;
       loginBtn.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="height: 14px; margin-right: 8px;">Login to Sync`;
       loginBtn.style.background = "#fff";
       logoutBtn.style.display = "none";
-      // Fallback to local storage if present
       window.loadState(); 
       window.updateProgress();
       window.updateContestProgress();
@@ -261,7 +277,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
 
   async function fetchCloudState() {
     if (!window.currentUid) return;
-    const docRef = doc(db, "users", window.currentUid);
+    
+    // Read from the assigned document ID
+    const docRef = doc(db, "users", getTargetDocId());
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists() && docSnap.data().progress) {
@@ -270,7 +288,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
       window.userState = {};
     }
     
-    // Sync UI with fetched state
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
       const id = cb.id.replace('cb-', '').replace('ccb-', '');
       const isDone = !!window.userState[id];
@@ -283,16 +300,15 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
     window.updateContestProgress();
   }
 
-  // Override the saveState function used by the checkboxes
   window.saveState = async function() {
     if (!window.currentUid) {
-      // Fallback to localStorage
       try { localStorage.setItem('praneel_placement_v4_tracker', JSON.stringify(window.userState)); } 
       catch(e) { console.error("LocalStorage error", e); }
       return; 
     }
-    // Async save to Firestore
-    setDoc(doc(db, "users", window.currentUid), {
+    
+    // Write to the assigned document ID
+    setDoc(doc(db, "users", getTargetDocId()), {
       progress: window.userState,
       lastUpdated: new Date()
     }, { merge: true }).catch(err => console.error("Cloud Sync failed", err));
