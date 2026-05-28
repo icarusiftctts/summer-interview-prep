@@ -1,1247 +1,507 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Placement Battle Plan</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
-  <style>
-    :root {
-      --bg: #050714;
-      --card: #0d1128;
-      --card2: #151b3d;
-      --border: #232d66;
-      --green: #22ff00;
-      --orange: #ff9100;
-      --blue: #00e5ff;
-      --purple: #e066ff;
-      --yellow: #ffee00;
-      --red: #ff2a55;
-      --text: #ffffff;
-      --muted: #aeb8d1;
-      --fs-base: 15px;
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      font-size: var(--fs-base);
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    /* ===== HEADER ===== */
-    .header {
-      background: linear-gradient(135deg, #0a0d2b 0%, #151b3d 100%);
-      border-bottom: 3px solid var(--green);
-      padding: 2rem;
-      position: relative;
-      z-index: 100;
-      box-shadow: 0 10px 40px rgba(34, 255, 0, 0.15);
-    }
-
-    .header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .header h1 {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.8rem;
-      color: var(--green);
-      text-shadow: 0 0 15px rgba(34, 255, 0, 0.4);
-      text-transform: uppercase;
-    }
-
-    .header p {
-      color: var(--blue);
-      font-size: 0.9rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 600;
-      margin-top: 0.5rem;
-    }
-
-    /* ===== PROGRESS BAR ===== */
-    .overall-progress {
-      margin-top: 1.5rem;
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-size: 1rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 700;
-    }
-
-    .progress-label span:first-child {
-      color: var(--green);
-    }
-
-    .progress-label span:last-child {
-      color: var(--yellow);
-      font-size: 1.2rem;
-    }
-
-    .progress-bar-bg {
-      background: #1a1f45;
-      border-radius: 12px;
-      height: 24px;
-      overflow: hidden;
-      border: 2px solid var(--border);
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      border-radius: 10px;
-      background: linear-gradient(90deg, var(--blue), var(--green));
-      transition: width 0.5s ease;
-    }
-
-    .stats-row {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .stat-pill {
-      background: rgba(255, 255, 255, 0.08);
-      border: 2px solid var(--border);
-      border-radius: 30px;
-      padding: 0.5rem 1.2rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.9rem;
-      color: var(--text);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .stat-pill span {
-      color: var(--green);
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .btn-action {
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .btn-action:hover {
-      transform: scale(1.05);
-    }
-
-    /* ===== TABS ===== */
-    .tabs-container {
-      background: var(--card);
-      border-bottom: 3px solid var(--border);
-      padding: 0 2rem;
-      overflow-x: auto;
-      position: sticky;
-      top: 0;
-      z-index: 90;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      min-width: max-content;
-    }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 1.2rem 1.5rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      font-family: 'IBM Plex Mono', monospace;
-      color: var(--muted);
-      border-bottom: 4px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .tab-btn:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .tab-btn.active {
-      color: var(--green);
-      border-bottom-color: var(--green);
-      background: rgba(34, 255, 0, 0.1);
-    }
-
-    .tab-progress {
-      font-size: 0.85rem;
-      color: var(--yellow);
-      margin-left: 0.5rem;
-    }
-
-    .tab-icon {
-      margin-right: 0.5rem;
-    }
-
-    /* ===== MAIN CONTENT ===== */
-    .main {
-      padding: 2rem;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .content-panel {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .content-panel.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* ===== BLUEPRINT ===== */
-    .blueprint-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      font-size: 0.85rem;
-      margin-bottom: 2rem;
-    }
-
-    .bp-col {
-      background: rgba(0, 229, 255, 0.05);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-    }
-
-    .bp-col h3 {
-      color: var(--yellow);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(255, 238, 0, 0.3);
-      padding-bottom: 0.3rem;
-    }
-
-    .bp-col ul {
-      list-style: none;
-      margin-top: 1rem;
-    }
-
-    .bp-col li {
-      margin-bottom: 0.6rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .bp-col li::before {
-      content: '▹';
-      color: var(--green);
-      font-weight: bold;
-    }
-
-    .bp-col.trajectory {
-      background: rgba(255, 238, 0, 0.05);
-      border: 2px dashed var(--yellow);
-    }
-
-    .bp-col.trajectory li {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .bp-col.trajectory li::before {
-      content: '↓';
-      color: var(--yellow);
-    }
-
-    .interview-guide-header {
-      background: rgba(34, 255, 0, 0.1);
-      border: 2px solid var(--green);
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-    }
-
-    .interview-guide-header a {
-      color: var(--yellow);
-      font-weight: 700;
-      text-decoration: none;
-      border-bottom: 1px solid var(--yellow);
-    }
-
-    .interview-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .company-card {
-      background: var(--card2);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-    }
-
-    .company-card h4 {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.2rem;
-      color: var(--blue);
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
-    }
-
-    .company-card ol {
-      margin-left: 1.5rem;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .company-card li {
-      margin-bottom: 0.5rem;
-    }
-
-    .company-card strong {
-      color: var(--text);
-    }
-
-    /* ===== CONTEST CALENDAR ===== */
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .month-card {
-      background: var(--card2);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-    }
-
-    .month-card h3 {
-      color: var(--green);
-      font-family: 'Orbitron', monospace;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-    }
-
-    .contest-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 0.8rem;
-      font-size: 0.9rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .contest-date {
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 700;
-      color: var(--yellow);
-      min-width: 120px;
-    }
-
-    .badge-platform {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
-      font-weight: 700;
-      min-width: 90px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      transition: opacity 0.2s, transform 0.15s;
-    }
-
-    .badge-platform:hover {
-      opacity: 0.8;
-      transform: scale(1.06);
-    }
-
-    .plt-lc {
-      background: rgba(255, 161, 22, 0.2);
-      color: #ffa116;
-      border: 1px solid #ffa116;
-    }
-
-    .plt-cf {
-      background: rgba(30, 144, 255, 0.2);
-      color: #1e90ff;
-      border: 1px solid #1e90ff;
-    }
-
-    .plt-cc {
-      background: rgba(139, 69, 19, 0.2);
-      color: #d2b48c;
-      border: 1px solid #d2b48c;
-    }
-
-    /* ===== WEEK PANELS ===== */
-    .week-header {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-      padding: 1.5rem;
-      background: var(--card);
-      border-radius: 16px;
-      border-left: 6px solid var(--green);
-    }
-
-    .week-title {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.5rem;
-      color: var(--green);
-    }
-
-    .week-subtitle {
-      color: var(--text);
-      font-size: 1rem;
-      font-family: 'IBM Plex Mono', monospace;
-      margin-top: 0.5rem;
-      font-weight: 500;
-    }
-
-    .day-card {
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      margin-bottom: 1.5rem;
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-
-    .day-card:hover {
-      border-color: rgba(34, 255, 0, 0.4);
-    }
-
-    .day-card.completed {
-      border-color: rgba(34, 255, 0, 0.8);
-      background: rgba(34, 255, 0, 0.02);
-    }
-
-    .day-header {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      padding: 1.2rem 1.5rem;
-      cursor: pointer;
-      user-select: none;
-      background: var(--card2);
-    }
-
-    .day-header:hover {
-      background: #1c2452;
-    }
-
-    .day-number {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.6rem;
-      color: var(--green);
-      min-width: 60px;
-    }
-
-    .day-info {
-      flex: 1;
-    }
-
-    .day-title {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .day-meta {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-top: 0.4rem;
-      font-weight: 600;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .physical-date {
-      color: var(--blue);
-      background: rgba(0, 229, 255, 0.1);
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-    }
-
-    .day-badge {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.85rem;
-      padding: 0.4rem 0.8rem;
-      border-radius: 12px;
-      border: 2px solid;
-      font-weight: 700;
-    }
-
-    .day-progress {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 1.1rem;
-      color: var(--yellow);
-      font-weight: bold;
-      min-width: 60px;
-      text-align: right;
-    }
-
-    .day-chevron {
-      color: var(--blue);
-      font-size: 1.5rem;
-      transition: transform 0.3s;
-      margin-left: 1rem;
-    }
-
-    .day-card.open .day-chevron {
-      transform: rotate(180deg);
-    }
-
-    .day-body {
-      display: none;
-      padding: 1.5rem;
-      border-top: 2px solid var(--border);
-    }
-
-    .day-card.open .day-body {
-      display: block;
-    }
-
-    .day-tip {
-      background: rgba(0, 229, 255, 0.1);
-      border: 2px solid rgba(0, 229, 255, 0.3);
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      color: #fff;
-      font-weight: 500;
-    }
-
-    .day-tip strong {
-      color: var(--blue);
-      font-family: 'Orbitron', monospace;
-      letter-spacing: 1px;
-    }
-
-    /* ===== TASKS ===== */
-    .section {
-      margin-bottom: 2rem;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      margin-bottom: 1rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 2px solid var(--border);
-    }
-
-    .section-title {
-      font-size: 1.2rem;
-      font-weight: 800;
-      font-family: 'IBM Plex Mono', monospace;
-    }
-
-    .section.morning .section-title {
-      color: var(--yellow);
-    }
-
-    .section.afternoon .section-title {
-      color: var(--orange);
-    }
-
-    .section.evening .section-title {
-      color: var(--purple);
-    }
-
-    .task-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 0.8rem 1rem;
-      border-radius: 12px;
-      margin-bottom: 0.6rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 2px solid transparent;
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-
-    .task-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--border);
-    }
-
-    .task-item.done {
-      background: rgba(34, 255, 0, 0.08);
-      border-color: rgba(34, 255, 0, 0.3);
-    }
-
-    .task-cb {
-      width: 32px;
-      height: 32px;
-      min-width: 32px;
-      border-radius: 8px;
-      border: 3px solid var(--muted);
-      background: transparent;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      position: relative;
-      transition: all 0.2s;
-      margin-top: 0.2rem;
-      flex-shrink: 0;
-    }
-
-    .task-cb:checked {
-      background: var(--green);
-      border-color: var(--green);
-    }
-
-    .task-cb:checked::after {
-      content: '✔';
-      position: absolute;
-      top: -2px;
-      left: 5px;
-      color: #000;
-      font-size: 22px;
-      font-weight: 900;
-    }
-
-    .task-label {
-      font-size: 1.1rem;
-      color: var(--text);
-      line-height: 1.5;
-      flex: 1;
-      font-weight: 500;
-      pointer-events: none;
-    }
-
-    .task-item.done .task-label {
-      color: var(--muted);
-      text-decoration: line-through;
-    }
-
-    .company-tag {
-      display: inline-block;
-      font-size: 0.8rem;
-      font-family: 'IBM Plex Mono', monospace;
-      font-weight: 700;
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-      margin-right: 0.5rem;
-      background: #2a3052;
-      border: 1px solid #3d4674;
-      color: #fff;
-    }
-
-    .tag-deshaw {
-      border-color: #ff2a55;
-      color: #ff2a55;
-    }
-
-    .tag-atl {
-      border-color: #0052CC;
-      color: #0052CC;
-    }
-
-    .task-type {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.85rem;
-      padding: 0.2rem 0.8rem;
-      border-radius: 8px;
-      white-space: nowrap;
-      font-weight: 700;
-      align-self: center;
-      pointer-events: none;
-    }
-
-    .type-lc {
-      background: rgba(0, 229, 255, 0.15);
-      color: var(--blue);
-      border: 2px solid var(--blue);
-    }
-
-    .type-study {
-      background: rgba(255, 238, 0, 0.15);
-      color: var(--yellow);
-      border: 2px solid var(--yellow);
-    }
-
-    .type-core {
-      background: rgba(224, 102, 255, 0.15);
-      color: var(--purple);
-      border: 2px solid var(--purple);
-    }
-
-    .type-mock {
-      background: rgba(255, 42, 85, 0.15);
-      color: var(--red);
-      border: 2px solid var(--red);
-    }
-
-    .type-sql {
-      background: rgba(34, 255, 0, 0.15);
-      color: var(--green);
-      border: 2px solid var(--green);
-    }
-
-    .type-lld {
-      background: rgba(255, 145, 0, 0.15);
-      color: var(--orange);
-      border: 2px solid var(--orange);
-    }
-
-    @media (max-width: 800px) {
-      html {
-        font-size: 20px;
-      }
-
-      .header {
-        padding: 1.5rem;
-      }
-
-      .tabs-container {
-        padding: 0 1rem;
-      }
-
-      .main {
-        padding: 1rem;
-      }
-
-      .day-header {
-        flex-wrap: wrap;
-      }
-    }
-
-    ::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 6px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--blue);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placement Battle Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050714;
+  --card: #0d1128;
+  --card2: #151b3d;
+  --border: #232d66;
+  --green: #22ff00;
+  --orange: #ff9100;
+  --blue: #00e5ff;
+  --purple: #e066ff;
+  --yellow: #ffee00;
+  --red: #ff2a55;
+  --text: #ffffff;
+  --muted: #aeb8d1;
+  --fs-base: 15px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: var(--fs-base); }
+body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.6; min-height: 100vh; }
+
+/* ===== HEADER ===== */
+.header { background: linear-gradient(135deg, #0a0d2b 0%, #151b3d 100%); border-bottom: 3px solid var(--green); padding: 2rem; position: relative; z-index: 100; box-shadow: 0 10px 40px rgba(34, 255, 0, 0.15); }
+.header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.header h1 { font-family: 'Orbitron', monospace; font-size: 1.8rem; color: var(--green); text-shadow: 0 0 15px rgba(34,255,0,0.4); text-transform: uppercase; }
+.header p { color: var(--blue); font-size: 0.9rem; font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-top: 0.5rem; }
+
+/* ===== PROGRESS BAR ===== */
+.overall-progress { margin-top: 1.5rem; }
+.progress-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; font-family: 'IBM Plex Mono', monospace; font-weight: 700;}
+.progress-label span:first-child { color: var(--green); }
+.progress-label span:last-child { color: var(--yellow); font-size: 1.2rem; }
+.progress-bar-bg { background: #1a1f45; border-radius: 12px; height: 24px; overflow: hidden; border: 2px solid var(--border); }
+.progress-bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--blue), var(--green)); transition: width 0.5s ease; }
+.stats-row { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+.stat-pill { background: rgba(255,255,255,0.08); border: 2px solid var(--border); border-radius: 30px; padding: 0.5rem 1.2rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; color: var(--text); font-weight: 600; display:flex; align-items:center; gap:0.5rem;}
+.stat-pill span { color: var(--green); font-weight: 700; font-size: 1.1rem; }
+.btn-action { cursor: pointer; transition: transform 0.2s; }
+.btn-action:hover { transform: scale(1.05); }
+
+/* ===== TABS ===== */
+.tabs-container { background: var(--card); border-bottom: 3px solid var(--border); padding: 0 2rem; overflow-x: auto; position: sticky; top: 0; z-index: 90;}
+.tabs { display: flex; gap: 0.5rem; min-width: max-content; }
+.tab-btn { background: none; border: none; cursor: pointer; padding: 1.2rem 1.5rem; font-size: 0.95rem; font-weight: 600; font-family: 'IBM Plex Mono', monospace; color: var(--muted); border-bottom: 4px solid transparent; transition: all 0.2s; }
+.tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.tab-btn.active { color: var(--green); border-bottom-color: var(--green); background: rgba(34,255,0,0.1); }
+.tab-progress { font-size: 0.85rem; color: var(--yellow); margin-left: 0.5rem; }
+.tab-icon { margin-right: 0.5rem; }
+
+/* ===== MAIN CONTENT ===== */
+.main { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+.content-panel { display: none; animation: fadeIn 0.3s ease; }
+.content-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== BLUEPRINT ===== */
+.blueprint-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; font-size: 0.85rem; margin-bottom: 2rem;}
+.bp-col { background: rgba(0, 229, 255, 0.05); border: 2px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+.bp-col h3 { color: var(--yellow); font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,238,0,0.3); padding-bottom: 0.3rem;}
+.bp-col ul { list-style: none; margin-top: 1rem;}
+.bp-col li { margin-bottom: 0.6rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem;}
+.bp-col li::before { content: '▹'; color: var(--green); font-weight: bold; }
+.bp-col.trajectory { background: rgba(255,238,0,0.05); border: 2px dashed var(--yellow); }
+.bp-col.trajectory li { color: var(--text); font-weight: 600; }
+.bp-col.trajectory li::before { content: '↓'; color: var(--yellow); }
+.interview-guide-header { background: rgba(34, 255, 0, 0.1); border: 2px solid var(--green); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; }
+.interview-guide-header a { color: var(--yellow); font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--yellow); }
+.interview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; }
+.company-card { background: var(--card2); border: 2px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+.company-card h4 { font-family: 'Orbitron', monospace; font-size: 1.2rem; color: var(--blue); margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;}
+.company-card ol { margin-left: 1.5rem; color: var(--muted); font-size: 0.9rem; }
+.company-card li { margin-bottom: 0.5rem; }
+.company-card strong { color: var(--text); }
+
+/* ===== CONTEST CALENDAR ===== */
+.calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.month-card { background: var(--card2); border: 2px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+.month-card h3 { color: var(--green); font-family: 'Orbitron', monospace; margin-bottom: 1rem; text-transform: uppercase;}
+.contest-item { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; font-size: 0.85rem; padding-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: nowrap; }
+.contest-date { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--yellow); min-width: 100px; flex-shrink: 0; font-size: 0.8rem; }
+.badge-platform { font-size: 0.7rem; padding: 0.2rem 0.4rem; border-radius: 6px; font-weight: 700; width: 82px; min-width: 82px; text-align: center; text-decoration: none; display: inline-block; transition: opacity 0.2s, transform 0.15s; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.badge-platform:hover { opacity: 0.8; transform: scale(1.06); }
+.plt-lc { background: rgba(255, 161, 22, 0.2); color: #ffa116; border: 1px solid #ffa116; }
+.plt-cf { background: rgba(30, 144, 255, 0.2); color: #1e90ff; border: 1px solid #1e90ff; }
+.plt-cc { background: rgba(139, 69, 19, 0.2); color: #d2b48c; border: 1px solid #d2b48c; }
+.contest-item.done { background: rgba(34,255,0,0.06); border-radius: 8px; padding-left: 0.5rem; }
+.contest-item.done .contest-label { color: var(--muted); text-decoration: line-through; }
+.contest-cb { width: 20px; height: 20px; min-width: 20px; border-radius: 5px; border: 2px solid var(--muted); background: transparent; cursor: pointer; appearance: none; -webkit-appearance: none; position: relative; transition: all 0.2s; flex-shrink: 0; }
+.contest-cb:checked { background: var(--green); border-color: var(--green); }
+.contest-cb:checked::after { content: '✔'; position: absolute; top: -3px; left: 3px; color: #000; font-size: 13px; font-weight: 900; }
+.contest-label { flex: 1; color: var(--text); font-size: 0.85rem; }
+.contest-progress-bar-bg { background: #1a1f45; border-radius: 8px; height: 10px; overflow: hidden; border: 1px solid var(--border); margin-top: 1rem; }
+.contest-progress-bar-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--blue), var(--green)); transition: width 0.4s ease; }
+.contest-progress-label { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; }
+
+/* ===== WEEK PANELS ===== */
+.week-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem; padding: 1.5rem; background: var(--card); border-radius: 16px; border-left: 6px solid var(--green); }
+.week-title { font-family: 'Orbitron', monospace; font-size: 1.5rem; color: var(--green); }
+.week-subtitle { color: var(--text); font-size: 1rem; font-family: 'IBM Plex Mono', monospace; margin-top: 0.5rem; font-weight: 500;}
+.day-card { background: var(--card); border: 2px solid var(--border); border-radius: 16px; margin-bottom: 1.5rem; overflow: hidden; transition: border-color 0.2s; }
+.day-card:hover { border-color: rgba(34,255,0,0.4); }
+.day-card.completed { border-color: rgba(34,255,0,0.8); background: rgba(34,255,0,0.02); }
+.day-header { display: flex; align-items: center; gap: 1.5rem; padding: 1.2rem 1.5rem; cursor: pointer; user-select: none; background: var(--card2); }
+.day-header:hover { background: #1c2452; }
+.day-number { font-family: 'Orbitron', monospace; font-size: 1.6rem; color: var(--green); min-width: 60px; }
+.day-info { flex: 1; }
+.day-title { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+.day-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.95rem; color: var(--muted); margin-top: 0.4rem; font-weight: 600; display:flex; gap: 1rem; align-items:center;}
+.physical-date { color: var(--blue); background: rgba(0,229,255,0.1); padding: 0.2rem 0.6rem; border-radius: 6px; }
+.day-badge { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; padding: 0.4rem 0.8rem; border-radius: 12px; border: 2px solid; font-weight: 700;}
+.day-progress { font-family: 'IBM Plex Mono', monospace; font-size: 1.1rem; color: var(--yellow); font-weight: bold; min-width: 60px; text-align: right;}
+.day-chevron { color: var(--blue); font-size: 1.5rem; transition: transform 0.3s; margin-left: 1rem;}
+.day-card.open .day-chevron { transform: rotate(180deg); }
+.day-body { display: none; padding: 1.5rem; border-top: 2px solid var(--border); }
+.day-card.open .day-body { display: block; }
+.day-tip { background: rgba(0, 229, 255, 0.1); border: 2px solid rgba(0, 229, 255, 0.3); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; font-size: 1rem; color: #fff; font-weight: 500; }
+.day-tip strong { color: var(--blue); font-family: 'Orbitron', monospace; letter-spacing: 1px; }
+
+/* ===== TASKS ===== */
+.section { margin-bottom: 2rem; }
+.section-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--border); }
+.section-title { font-size: 1.2rem; font-weight: 800; font-family: 'IBM Plex Mono', monospace; }
+.section.morning .section-title { color: var(--yellow); }
+.section.afternoon .section-title { color: var(--orange); }
+.section.evening .section-title { color: var(--purple); }
+.task-item { display: flex; align-items: flex-start; gap: 1rem; padding: 0.8rem 1rem; border-radius: 12px; margin-bottom: 0.6rem; background: rgba(255,255,255,0.03); border: 2px solid transparent; transition: all 0.2s; cursor: pointer; }
+.task-item:hover { background: rgba(255,255,255,0.08); border-color: var(--border); }
+.task-item.done { background: rgba(34,255,0,0.08); border-color: rgba(34,255,0,0.3); }
+.task-cb { width: 32px; height: 32px; min-width: 32px; border-radius: 8px; border: 3px solid var(--muted); background: transparent; cursor: pointer; appearance: none; -webkit-appearance: none; position: relative; transition: all 0.2s; margin-top: 0.2rem; flex-shrink: 0; }
+.task-cb:checked { background: var(--green); border-color: var(--green); }
+.task-cb:checked::after { content: '✔'; position: absolute; top: -2px; left: 5px; color: #000; font-size: 22px; font-weight: 900; }
+.task-label { font-size: 1rem; color: var(--text); line-height: 1.5; flex: 1; font-weight: 500; pointer-events: none; }
+.task-item.done .task-label { color: var(--muted); text-decoration: line-through; }
+.company-tag { display: inline-block; font-size: 0.75rem; font-family: 'IBM Plex Mono', monospace; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 6px; margin-right: 0.4rem; background: #2a3052; border: 1px solid #3d4674; color: #fff;}
+.tag-deshaw { border-color: #ff2a55; color: #ff2a55; }
+.tag-atl { border-color: #0052CC; color: #0052CC; }
+.task-type { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; padding: 0.2rem 0.6rem; border-radius: 8px; white-space: nowrap; font-weight: 700; align-self: center; pointer-events: none;}
+.type-lc { background: rgba(0, 229, 255, 0.15); color: var(--blue); border: 2px solid var(--blue); }
+.type-study { background: rgba(255, 238, 0, 0.15); color: var(--yellow); border: 2px solid var(--yellow); }
+.type-core { background: rgba(224, 102, 255, 0.15); color: var(--purple); border: 2px solid var(--purple); }
+.type-mock { background: rgba(255, 42, 85, 0.15); color: var(--red); border: 2px solid var(--red); }
+.type-sql { background: rgba(34, 255, 0, 0.15); color: var(--green); border: 2px solid var(--green); }
+.type-lld { background: rgba(255, 145, 0, 0.15); color: var(--orange); border: 2px solid var(--orange); }
+
+@media (max-width: 800px) {
+  html { font-size: 20px; }
+  .header { padding: 1.5rem; }
+  .tabs-container { padding: 0 1rem; }
+  .main { padding: 1rem; }
+  .day-header { flex-wrap: wrap; }
+}
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+</style>
 </head>
-
 <body>
 
-  <div class="header">
-    <div class="header-top">
-      <div>
-        <h1>⚡ TIER-1 PLACEMENT &amp; MBB TRAJECTORY PLANNER</h1>
-        <p>// 61 Days | Github Company-Wise Integration | LocalStorage Enabled</p>
-      </div>
-    </div>
-    <div class="overall-progress">
-      <div class="progress-label">
-        <span>GLOBAL PROGRESS</span>
-        <span id="overall-pct">0%</span>
-      </div>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="overall-bar" style="width:0%"></div>
-      </div>
-    </div>
-    <div class="stats-row">
-      <div class="stat-pill">Tasks: <span id="stat-done">0</span> / <span id="stat-total">0</span></div>
-      <div class="stat-pill">Days Conquered: <span id="stat-days">0</span> / 61</div>
-      <button onclick="exportProgress()" class="stat-pill btn-action"
-        style="background:var(--blue); color:#000; border:none;">📤 Backup State</button>
-      <button onclick="importProgress()" class="stat-pill btn-action"
-        style="background:var(--orange); color:#000; border:none;">📥 Sync State</button>
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>⚡ TIER-1 PLACEMENT &amp; MBB TRAJECTORY PLANNER</h1>
+      <p>// 61 Days | Github Company-Wise Integration | LocalStorage Enabled</p>
     </div>
   </div>
-
-  <div class="tabs-container">
-    <div class="tabs" id="tabs"></div>
+  <div class="overall-progress">
+    <div class="progress-label">
+      <span>GLOBAL PROGRESS</span>
+      <span id="overall-pct">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="overall-bar" style="width:0%"></div>
+    </div>
   </div>
+  <div class="stats-row">
+    <div class="stat-pill">Tasks: <span id="stat-done">0</span> / <span id="stat-total">0</span></div>
+    <div class="stat-pill">Days Conquered: <span id="stat-days">0</span> / 61</div>
+    <button onclick="exportProgress()" class="stat-pill btn-action" style="background:var(--blue); color:#000; border:none;">📤 Backup State</button>
+    <button onclick="importProgress()" class="stat-pill btn-action" style="background:var(--orange); color:#000; border:none;">📥 Sync State</button>
+  </div>
+</div>
 
-  <div class="main" id="main-content"></div>
+<div class="tabs-container">
+  <div class="tabs" id="tabs"></div>
+</div>
 
-  <script>
-    // =====================================================================
-    // DATE HELPER (Starts May 26, 2026)
-    // =====================================================================
-    function getPhysicalDate(dayNumber) {
-      const date = new Date(2026, 4, 26); // Month is 0-indexed; 4 = May
-      date.setDate(date.getDate() + (dayNumber - 1));
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
-    }
+<div class="main" id="main-content"></div>
 
-    // =====================================================================
-    // CURRICULUM DATA
-    // =====================================================================
-    const DATA = [
-      {
-        week: 1, title: "Arrays &amp; Strings", sub: "Core Fundamentals &amp; Sliding Windows",
-        days: [
-          {
-            d: 1, title: "Array Basics &amp; Two Pointers", tip: "Most SDE roles heavily index on Two Pointers for initial phone screens.", badge: "🟡 Medium",
-            m: [{ t: "Study: Array iterators, time complexity, and in-place swapping.", type: "study" }, { t: "Study: Two Pointer technique (opposite ends vs same direction).", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Swiggy</span> LC 11: Container With Most Water", type: "lc" }, { t: "<span class='company-tag'>PhonePe</span> LC 121: Best Time to Buy/Sell Stock", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 26: Remove Duplicates from Sorted Array", type: "lc" }],
-            e: [{ t: "CS Core: Java Memory Model for Arrays vs Objects", type: "core" }]
-          },
-          {
-            d: 2, title: "Prefix Sum &amp; Subarrays", tip: "Prefix sums are the backbone of analytical OA questions (ZS, Deloitte).", badge: "🟡 Medium",
-            m: [{ t: "Study: Prefix Sum Array logic and continuous sub-array equations.", type: "study" }, { t: "Study: Kadane's Algorithm for Maximum Subarray.", type: "study" }],
-            a: [{ t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 238: Product of Array Except Self", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 560: Subarray Sum Equals K", type: "lc" }, { t: "<span class='company-tag'>AmEx</span> LC 974: Subarray Sums Divisible by K", type: "lc" }],
-            e: [{ t: "CS Core: Difference between pass-by-value and pass-by-reference in Java.", type: "core" }]
-          },
-          {
-            d: 3, title: "String Manipulation Basics", tip: "String parsing is essential for Sprinklr and Media.net.", badge: "🟡 Medium",
-            m: [{ t: "Study: ASCII character arrays, StringBuilder, and string immutability.", type: "study" }, { t: "Study: Sliding window concept intro for substrings.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Tekion</span> LC 3: Longest Substring Without Repeating", type: "lc" }, { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 242: Valid Anagram", type: "lc" }, { t: "<span class='company-tag'>Sprinklr</span> LC 49: Group Anagrams", type: "lc" }],
-            e: [{ t: "Write out the exact time complexities for Java String operations.", type: "study" }]
-          },
-          {
-            d: 4, title: "Sliding Window Advanced", tip: "Frequent pattern in Atlassian and Swiggy OAs.", badge: "🔴 Hard",
-            m: [{ t: "Study: Variable size sliding window template (expand right, shrink left).", type: "study" }, { t: "Study: 'At most K' trick for exact count problems.", type: "study" }],
-            a: [{ t: "<span class='company-tag tag-atl'>Atlassian</span> LC 76: Minimum Window Substring", type: "lc" }, { t: "<span class='company-tag'>PhonePe</span> LC 424: Longest Repeating Character Replacement", type: "lc" }, { t: "<span class='company-tag'>Swiggy</span> LC 438: Find All Anagrams in a String", type: "lc" }],
-            e: [{ t: "Draw a trace of the left/right pointers for LC 76 on paper.", type: "study" }]
-          },
-          {
-            d: 5, title: "Matrix &amp; 2D Arrays", tip: "Matrix traversals are guaranteed in Samsung R&D and MakeMyTrip OAs.", badge: "🟡 Medium",
-            m: [{ t: "Study: 2D array coordinates, direction vectors (dx, dy).", type: "study" }, { t: "Study: In-place matrix rotation math.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Samsung</span> LC 54: Spiral Matrix", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 48: Rotate Image", type: "lc" }, { t: "<span class='company-tag'>BNY Mellon</span> LC 73: Set Matrix Zeroes", type: "lc" }],
-            e: [{ t: "Mock Setup: Configure a clean Java IDE environment for upcoming mocks.", type: "study" }]
-          },
-          {
-            d: 6, title: "Binary Search Deep Dive", tip: "Binary Search on Answer Space is DE Shaw and Sprinklr's favorite pattern.", badge: "🔴 Hard",
-            m: [{ t: "Study: Binary search templates (Exact match, Left Boundary, Right Boundary).", type: "study" }, { t: "Study: Parametric Search (Binary Search on Answer).", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Razorpay</span> LC 33: Search in Rotated Sorted Array", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 875: Koko Eating Bananas", type: "lc" }, { t: "<span class='company-tag'>Sprinklr</span> LC 410: Split Array Largest Sum", type: "lc" }],
-            e: [{ t: "Review CS Core: Thread Lifecycle in Java OS concepts.", type: "core" }]
-          },
-          {
-            d: 7, title: "MOCK: Arrays, Strings, Matrices", tip: "First simulation. Strict 90 mins.", badge: "🔥 MOCK",
-            m: [{ t: "Review all templates: Sliding window, Binary Search, Prefix Sum.", type: "study" }],
-            a: [{ t: "MOCK Q1: Subarray Sums (Medium)", type: "mock" }, { t: "MOCK Q2: Matrix Spiral Traversal (Medium)", type: "mock" }, { t: "MOCK Q3: Binary Search on Answer (Hard)", type: "mock" }],
-            e: [{ t: "Analyze mock failures. Which question took > 30 mins?", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 2, title: "Linked Lists, Stacks &amp; Queues", sub: "Atlassian &amp; Swiggy Classics",
-        days: [
-          {
-            d: 8, title: "Linked List Core", tip: "Reversals and cycles.", badge: "🟡 Medium",
-            m: [{ t: "Study: Fast/Slow Pointers. Dummy Head technique.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Tekion</span> LC 206: Reverse Linked List", type: "lc" }, { t: "<span class='company-tag'>BNY Mellon</span> LC 141: Linked List Cycle", type: "lc" }, { t: "<span class='company-tag'>Swiggy</span> LC 143: Reorder List", type: "lc" }],
-            e: [{ t: "CS Core: HashMap internals in Java.", type: "core" }]
-          },
-          {
-            d: 9, title: "Linked List Advanced", tip: "Atlassian LFU Cache uses Doubly Linked Lists.", badge: "🔴 Hard",
-            m: [{ t: "Study: Doubly Linked List from scratch.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>PhonePe</span> LC 25: Reverse Nodes in k-Group", type: "lc" }, { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 146: LRU Cache (Must memorize)", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 2: Add Two Numbers", type: "lc" }],
-            e: [{ t: "Code an LRU Cache without looking at hints.", type: "study" }]
-          },
-          {
-            d: 10, title: "Stack Basics &amp; Parsing", tip: "Stack parsing problems are very common in MakeMyTrip and Tekion.", badge: "🟡 Medium",
-            m: [{ t: "Study: LIFO logic, valid parenthesis, Postfix evaluation.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Tekion</span> LC 20: Valid Parentheses", type: "lc" }, { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 150: Evaluate Reverse Polish Notation", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 394: Decode String", type: "lc" }],
-            e: [{ t: "System Design Prep: Intro to Rate Limiting (Atlassian prep).", type: "core" }]
-          },
-          {
-            d: 11, title: "Monotonic Stacks", tip: "DE Shaw and Flipkart use Monotonic Stacks to filter top candidates.", badge: "🔴 Hard",
-            m: [{ t: "Study: Monotonic increasing/decreasing stack logic.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Flipkart</span> LC 739: Daily Temperatures", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 84: Largest Rectangle in Histogram", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 85: Maximal Rectangle", type: "lc" }],
-            e: [{ t: "Draw the stack state transition for Histogram logic.", type: "study" }]
-          },
-          {
-            d: 12, title: "Queues &amp; Deques", tip: "Sliding window maximum with Deque is a top-tier favorite.", badge: "🔴 Hard",
-            m: [{ t: "Study: Queue vs Deque implementations.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>PhonePe</span> LC 239: Sliding Window Maximum (Deque)", type: "lc" }, { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 346: Moving Average from Data Stream", type: "lc" }, { t: "<span class='company-tag'>Swiggy</span> LC 933: Number of Recent Calls", type: "lc" }],
-            e: [{ t: "CS Core: Differences between TCP and UDP protocols (CN).", type: "core" }]
-          },
-          {
-            d: 13, title: "CS CORE: OOPs Deep Dive", tip: "DE Shaw, BNY Mellon, and Atlassian ask deep OOPs questions.", badge: "🟣 CS CORE",
-            m: [{ t: "Study: Abstraction, Encapsulation, Interface vs Abstract Class.", type: "core" }, { t: "Study: Polymorphism (Compile time vs Runtime).", type: "core" }],
-            a: [{ t: "Code: Design a Parking Lot in Java (Classes, Enums, Interfaces).", type: "lld" }, { t: "Code: Design an Elevator System.", type: "lld" }, { t: "Study: SOLID Principles and explain each with an example.", type: "core" }],
-            e: [{ t: "Review Java final, finally, finalize keywords.", type: "core" }]
-          },
-          {
-            d: 14, title: "MOCK: Stacks, LL, OOP", tip: "Simulate an Atlassian technical screen.", badge: "🔥 MOCK",
-            m: [{ t: "Review LRU Cache and Monotonic Stack templates.", type: "study" }],
-            a: [{ t: "MOCK Q1: Reverse k-group Linked List", type: "mock" }, { t: "MOCK Q2: Next Greater Element variant", type: "mock" }, { t: "MOCK Q3: Design hit counter (OOP + Queue)", type: "mock" }],
-            e: [{ t: "REST Day.", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 3, title: "Trees &amp; BSTs", sub: "DE Shaw &amp; MakeMyTrip Favorites",
-        days: [
-          {
-            d: 15, title: "Tree Traversals &amp; Depth", tip: "Recursion fundamentals. Expect bug-free tree code.", badge: "🟡 Medium",
-            m: [{ t: "Study: Inorder, Preorder, Postorder. BFS Level Order.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>MakeMyTrip</span> LC 102: Binary Tree Level Order Traversal", type: "lc" }, { t: "<span class='company-tag'>Flipkart</span> LC 103: Binary Tree Zigzag Level Order", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 199: Binary Tree Right Side View", type: "lc" }],
-            e: [{ t: "Code an iterative Inorder traversal.", type: "study" }]
-          },
-          {
-            d: 16, title: "Tree Path Problems", tip: "Path Sums and Diameters are everywhere. Crucial for Sprinklr.", badge: "🟡 Medium",
-            m: [{ t: "Study: Returning values up the recursive stack vs global state.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>PhonePe</span> LC 236: Lowest Common Ancestor", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 124: Binary Tree Maximum Path Sum (Hard)", type: "lc" }, { t: "<span class='company-tag'>Tekion</span> LC 113: Path Sum II", type: "lc" }],
-            e: [{ t: "Trace Maximum Path Sum logic recursively on paper.", type: "study" }]
-          },
-          {
-            d: 17, title: "Binary Search Trees", tip: "MakeMyTrip and Samsung heavily rely on BST properties.", badge: "🟡 Medium",
-            m: [{ t: "Study: BST properties (Inorder is sorted). Insertion/Deletion.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>BNY Mellon</span> LC 98: Validate Binary Search Tree", type: "lc" }, { t: "<span class='company-tag'>Samsung</span> LC 230: Kth Smallest Element in a BST", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 108: Convert Sorted Array to BST", type: "lc" }],
-            e: [{ t: "CS Core: OS Process vs Thread differences.", type: "core" }]
-          },
-          {
-            d: 18, title: "Tree Construction &amp; Serialization", tip: "Serialization is a classic Hard question.", badge: "🔴 Hard",
-            m: [{ t: "Study: Building trees from Inorder + Preorder arrays. Serialization strings.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Flipkart</span> LC 105: Construct BT from Preorder and Inorder", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 297: Serialize and Deserialize Binary Tree", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 114: Flatten Binary Tree to Linked List", type: "lc" }],
-            e: [{ t: "Code the Tree Serialization using a Queue (BFS approach).", type: "study" }]
-          },
-          {
-            d: 19, title: "Tries (Prefix Trees)", tip: "Sprinklr almost always asks a Trie question in their 3rd OA slot.", badge: "🔴 Hard",
-            m: [{ t: "Study: TrieNode structure, insert, and search operations.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Sprinklr</span> LC 208: Implement Trie", type: "lc" }, { t: "<span class='company-tag'>Sprinklr</span> LC 212: Word Search II (Trie + DFS)", type: "lc" }, { t: "<span class='company-tag'>PhonePe</span> LC 1268: Search Suggestions System", type: "lc" }],
-            e: [{ t: "CS Core: Paging and Virtual Memory in OS.", type: "core" }]
-          },
-          {
-            d: 20, title: "CS CORE: OS Fundamentals", tip: "DE Shaw technical interviews have a dedicated OS/DBMS section.", badge: "🟣 CS CORE",
-            m: [{ t: "Study: Deadlocks (4 conditions, Banker's Algorithm).", type: "core" }, { t: "Study: CPU Scheduling algorithms (FCFS, SJF, RR).", type: "core" }],
-            a: [{ t: "Study: Paging vs Segmentation, TLB, Page Fault handling.", type: "core" }, { t: "Study: Mutex vs Semaphore. Producer-Consumer problem.", type: "core" }, { t: "Quiz: Solve 15 OS MCQs on GeeksForGeeks.", type: "core" }],
-            e: [{ t: "Link your Transit Booking project to OS concepts.", type: "study" }]
-          },
-          {
-            d: 21, title: "MOCK: Trees &amp; OS", tip: "Simulate a DE Shaw hybrid round.", badge: "🔥 MOCK",
-            m: [{ t: "Review all Tree traversals, LCA, Serialization logic.", type: "study" }],
-            a: [{ t: "MOCK Q1: BST Validation / Kth Smallest", type: "mock" }, { t: "MOCK Q2: Maximum Path Sum", type: "mock" }, { t: "MOCK Q3: Word Search II (Trie)", type: "mock" }, { t: "MOCK Q4: Explain Banker's Algorithm verbally.", type: "mock" }],
-            e: [{ t: "Evaluate your Trie implementation speed. Must be under 15 mins.", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 4, title: "Graphs Core", sub: "Swiggy &amp; Innovaccer Targets",
-        days: [
-          {
-            d: 22, title: "Graph Fundamentals &amp; BFS", tip: "Swiggy tests BFS on grids heavily.", badge: "🟡 Medium",
-            m: [{ t: "Study: Graph representations (Adjacency List vs Matrix). Grid BFS.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Swiggy</span> LC 200: Number of Islands", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 994: Rotting Oranges", type: "lc" }, { t: "<span class='company-tag'>Innovaccer</span> LC 542: 01 Matrix", type: "lc" }],
-            e: [{ t: "Code a standard Grid BFS from memory.", type: "study" }]
-          },
-          {
-            d: 23, title: "DFS &amp; Connected Components", tip: "Flipkart likes DFS backtracking on grids.", badge: "🟡 Medium",
-            m: [{ t: "Study: Recursive DFS vs Iterative DFS. Cycle detection.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Flipkart</span> LC 695: Max Area of Island", type: "lc" }, { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 323: Number of Connected Components", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 130: Surrounded Regions", type: "lc" }],
-            e: [{ t: "CS Core: Database Normalization (1NF to BCNF).", type: "core" }]
-          },
-          {
-            d: 24, title: "Topological Sort", tip: "Course Schedule is highly asked across the board.", badge: "🟡 Medium",
-            m: [{ t: "Study: Kahn's Algorithm (In-degree array + Queue). DFS Topo Sort.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Tekion</span> LC 207: Course Schedule", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 269: Alien Dictionary (Hard)", type: "lc" }, { t: "<span class='company-tag'>Flipkart</span> LC 310: Minimum Height Trees", type: "lc" }],
-            e: [{ t: "Draw out the Alien Dictionary graph logic on paper.", type: "study" }]
-          },
-          {
-            d: 25, title: "Dijkstra's Algorithm", tip: "Shortest path on weighted graphs (Swiggy routing).", badge: "🔴 Hard",
-            m: [{ t: "Study: PriorityQueue based Dijkstra.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Swiggy</span> LC 743: Network Delay Time", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 787: Cheapest Flights Within K Stops", type: "lc" }, { t: "<span class='company-tag'>Innovaccer</span> LC 1631: Path With Minimum Effort", type: "lc" }],
-            e: [{ t: "Memorize the Java PriorityQueue syntax for Dijkstra.", type: "study" }]
-          },
-          {
-            d: 26, title: "Union Find (DSU)", tip: "Disjoint Set Union is a cheat code for many graph problems at Sprinklr.", badge: "🔴 Hard",
-            m: [{ t: "Study: Path Compression and Union by Rank. Kruskal's MST.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Flipkart</span> LC 684: Redundant Connection", type: "lc" }, { t: "<span class='company-tag'>Sprinklr</span> LC 990: Satisfiability of Equality Equations", type: "lc" }, { t: "<span class='company-tag'>Samsung</span> LC 547: Number of Provinces", type: "lc" }],
-            e: [{ t: "Write a reusable DSU class in Java and save it.", type: "study" }]
-          },
-          {
-            d: 27, title: "CS CORE: DBMS Fundamentals", tip: "Crucial for Data/Analytics tracks at ZS Associates and Deloitte.", badge: "🟣 CS CORE",
-            m: [{ t: "Study: ACID Properties with real-world banking examples.", type: "core" }, { t: "Study: Transaction Isolation Levels.", type: "core" }],
-            a: [{ t: "Study: B-Trees and Indexing. How databases search so fast.", type: "core" }, { t: "Study: SQL vs NoSQL. When to use MongoDB vs PostgreSQL.", type: "core" }, { t: "Quiz: Solve 15 DBMS MCQs.", type: "core" }],
-            e: [{ t: "Map your C-Cell SQL Schema. Is it in 3NF? Justify it.", type: "study" }]
-          },
-          {
-            d: 28, title: "MOCK: Graphs &amp; DBMS", tip: "Simulate a Swiggy / Innovaccer engineering round.", badge: "🔥 MOCK",
-            m: [{ t: "Review Dijkstra and DSU implementations.", type: "study" }],
-            a: [{ t: "MOCK Q1: Graph BFS / Connected Components", type: "mock" }, { t: "MOCK Q2: Topological Sort", type: "mock" }, { t: "MOCK Q3: Dijkstra Algorithm", type: "mock" }, { t: "MOCK Q4: Explain indexing and query optimization.", type: "mock" }],
-            e: [{ t: "Check your DSU implementation speed.", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 5, title: "DP Phase 1", sub: "The Ultimate Separator for Tier 1",
-        days: [
-          {
-            d: 29, title: "1D DP &amp; Memoization", tip: "Dynamic Programming is the gatekeeper for Flipkart and Sprinklr.", badge: "🟡 Medium",
-            m: [{ t: "Study: Top-down vs Bottom-up. State definition.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Tekion</span> LC 70: Climbing Stairs", type: "lc" }, { t: "<span class='company-tag'>PhonePe</span> LC 198: House Robber", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 139: Word Break", type: "lc" }],
-            e: [{ t: "Draw the recursive tree for House Robber.", type: "study" }]
-          },
-          {
-            d: 30, title: "Knapsack Variants", tip: "0/1 Knapsack is a guaranteed DP archetype in OAs.", badge: "🟡 Medium",
-            m: [{ t: "Study: 0/1 Knapsack logic and 2D to 1D space optimization.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Flipkart</span> LC 416: Partition Equal Subset Sum", type: "lc" }, { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 322: Coin Change", type: "lc" }, { t: "<span class='company-tag'>Sprinklr</span> LC 494: Target Sum", type: "lc" }],
-            e: [{ t: "Write out the 1D space optimized version of 0/1 Knapsack.", type: "study" }]
-          },
-          {
-            d: 31, title: "2D DP (Grids &amp; Strings)", tip: "LCS and Grid paths are standard in DE Shaw.", badge: "🟡 Medium",
-            m: [{ t: "Study: Longest Common Subsequence logic. Grid path transitions.", type: "study" }],
-            a: [{ t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 1143: Longest Common Subsequence", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 62: Unique Paths", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 72: Edit Distance (Hard)", type: "lc" }],
-            e: [{ t: "Draw the 2D DP matrix for Edit Distance on paper.", type: "study" }]
-          },
-          {
-            d: 32, title: "DP Subsequences", tip: "LIS is a foundational algorithm you must memorize.", badge: "🔴 Hard",
-            m: [{ t: "Study: Longest Increasing Subsequence (O(N^2) vs O(N log N)).", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Flipkart</span> LC 300: Longest Increasing Subsequence", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 516: Longest Palindromic Subsequence", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 1312: Min Insertions to Make a String Palindrome", type: "lc" }],
-            e: [{ t: "Learn the Binary Search approach for LIS (Patience Sorting).", type: "study" }]
-          },
-          {
-            d: 33, title: "SQL CORE: Joins &amp; Aggregations", tip: "ZS Associates explicitly tests complex SQL writing.", badge: "🟢 SQL",
-            m: [{ t: "Study: SQL JOINs (INNER, LEFT, RIGHT, FULL, CROSS).", type: "sql" }, { t: "Study: GROUP BY, HAVING vs WHERE clauses.", type: "sql" }],
-            a: [{ t: "HackerRank/Leetcode: Solve 10 Easy/Medium SQL queries.", type: "sql" }, { t: "LC SQL 175: Combine Two Tables", type: "lc" }, { t: "LC SQL 176: Second Highest Salary", type: "lc" }],
-            e: [{ t: "Write out the SQL execution order.", type: "sql" }]
-          },
-          {
-            d: 34, title: "SQL CORE: Window Functions", tip: "Analytics roles (Deloitte, ZS, Amex) expect Window Functions.", badge: "🟢 SQL",
-            m: [{ t: "Study: ROW_NUMBER(), RANK(), DENSE_RANK().", type: "sql" }, { t: "Study: LEAD(), LAG() and OVER(PARTITION BY).", type: "sql" }],
-            a: [{ t: "HackerRank/Leetcode: Solve 5 Advanced Window Function SQLs.", type: "sql" }, { t: "LC SQL 185: Department Top 3 Salaries (Hard)", type: "lc" }, { t: "LC SQL 262: Trips and Users (Hard)", type: "lc" }],
-            e: [{ t: "Review your C-Cell SQL tables and write a complex join query for it.", type: "sql" }]
-          },
-          {
-            d: 35, title: "MOCK: ZS Associates Analytics Track", tip: "Simulate an Analytics/Consulting tech round (DSA + SQL).", badge: "🔥 MOCK",
-            m: [{ t: "Review Window functions and DP templates.", type: "study" }],
-            a: [{ t: "MOCK Q1: 1D DP (House Robber variant)", type: "mock" }, { t: "MOCK Q2: 2D DP (Grid Path variant)", type: "mock" }, { t: "MOCK Q3: SQL Hard (Top N per category)", type: "mock" }],
-            e: [{ t: "Rest and recover.", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 6, title: "DP Phase 2, Intervals, Backtracking", sub: "Atlassian &amp; PhonePe Preparation",
-        days: [
-          {
-            d: 36, title: "Intervals &amp; Sweep Line", tip: "Merge Intervals is a must-know.", badge: "🟡 Medium",
-            m: [{ t: "Study: Sorting intervals, checking overlaps. Sweep Line algorithm.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>PhonePe</span> LC 56: Merge Intervals", type: "lc" }, { t: "<span class='company-tag'>Swiggy</span> LC 57: Insert Interval", type: "lc" }, { t: "<span class='company-tag'>Tekion</span> LC 252/253: Meeting Rooms I &amp; II", type: "lc" }],
-            e: [{ t: "Write out the custom Comparator logic in Java for 2D arrays.", type: "study" }]
-          },
-          {
-            d: 37, title: "Backtracking Core", tip: "Permutations and Combinations. Crucial for DE Shaw.", badge: "🟡 Medium",
-            m: [{ t: "Study: Backtracking template (Choose, Explore, Un-choose).", type: "study" }],
-            a: [{ t: "<span class='company-tag'>MakeMyTrip</span> LC 46: Permutations", type: "lc" }, { t: "<span class='company-tag'>Samsung</span> LC 78: Subsets", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 39: Combination Sum", type: "lc" }],
-            e: [{ t: "Draw out the entire recursion tree for Subsets of [1,2,3].", type: "study" }]
-          },
-          {
-            d: 38, title: "Backtracking Hard", tip: "N-Queens and Word Search are frequent Hard questions.", badge: "🔴 Hard",
-            m: [{ t: "Study: Constraint satisfaction and pruning branches.", type: "study" }],
-            a: [{ t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 51: N-Queens", type: "lc" }, { t: "<span class='company-tag'>PhonePe</span> LC 79: Word Search", type: "lc" }, { t: "<span class='company-tag'>Flipkart</span> LC 131: Palindrome Partitioning", type: "lc" }],
-            e: [{ t: "Code N-Queens using 1D arrays for diagonals.", type: "study" }]
-          },
-          {
-            d: 39, title: "Greedy Algorithms", tip: "Greedy proofs are tricky. Know the classics.", badge: "🟡 Medium",
-            m: [{ t: "Study: Why Greedy works vs DP. Local optimal to global optimal.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>MakeMyTrip</span> LC 55: Jump Game", type: "lc" }, { t: "<span class='company-tag tag-atl'>Atlassian</span> LC 135: Candy (Hard)", type: "lc" }, { t: "<span class='company-tag'>Razorpay</span> LC 134: Gas Station", type: "lc" }],
-            e: [{ t: "Prove verbally why the greedy choice in Gas Station works.", type: "study" }]
-          },
-          {
-            d: 40, title: "Advanced DP (Intervals)", tip: "Sprinklr Hard round often has an Interval DP question.", badge: "🔴 Hard",
-            m: [{ t: "Study: MCM (Matrix Chain Multiplication) pattern. Burst Balloons logic.", type: "study" }],
-            a: [{ t: "<span class='company-tag'>Sprinklr</span> LC 312: Burst Balloons (Hard)", type: "lc" }, { t: "<span class='company-tag'>Sprinklr</span> LC 1039: Minimum Score Triangulation of Polygon", type: "lc" }, { t: "<span class='company-tag'>MakeMyTrip</span> LC 1000: Minimum Cost to Merge Stones", type: "lc" }],
-            e: [{ t: "Review Interval DP transitions.", type: "study" }]
-          },
-          {
-            d: 41, title: "CS CORE: System Design Intro", tip: "Crucial for Atlassian and later MBB tech consulting interviews.", badge: "🟣 CS CORE",
-            m: [{ t: "Study: Vertical vs Horizontal Scaling. Load Balancers.", type: "core" }, { t: "Study: CAP Theorem. Caching Strategies.", type: "core" }],
-            a: [{ t: "Watch: Design URL Shortener (TinyURL) on YouTube.", type: "core" }],
-            e: [{ t: "Relate CAP theorem to your Desportivos live scoreboard project.", type: "study" }]
-          },
-          {
-            d: 42, title: "MOCK: PhonePe / Atlassian Sim", tip: "Simulate a Tier-1 tech round.", badge: "🔥 MOCK",
-            m: [{ t: "Review Intervals, Greedy, and Backtracking.", type: "study" }],
-            a: [{ t: "MOCK Q1: Merge Intervals variant", type: "mock" }, { t: "MOCK Q2: Gas Station / Jump Game variant", type: "mock" }, { t: "MOCK Q3: N-Queens or Word Search", type: "mock" }],
-            e: [{ t: "Critique your code cleanliness and variable naming.", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 7, title: "Heaps, Bit Manipulation, LLD", sub: "Flipkart &amp; DE Shaw Polish",
-        days: [
-          {
-            d: 43, title: "Heaps &amp; Priority Queues", tip: "Top K elements and Median stream.", badge: "🟡 Medium",
-            m: [{ t: "Study: Heapify, Insert, Delete logic. Two Heaps pattern.", type: "study" }],
-            a: [{ t: "<span class='company-tag tag-atl'>Atlassian</span> LC 347: Top K Frequent Elements", type: "lc" }, { t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 295: Find Median from Data Stream (Hard)", type: "lc" }, { t: "<span class='company-tag'>Swiggy</span> LC 215: Kth Largest Element in an Array", type: "lc" }],
-            e: [{ t: "Code a Min-Heap from scratch.", type: "study" }]
-          },
-          {
-            d: 44, title: "Bit Manipulation", tip: "DE Shaw and Samsung love Bit Tricks in their MCQs and OAs.", badge: "🟡 Medium",
-            m: [{ t: "Study: XOR properties (x^x = 0). Finding set bits. n &amp; (n-1) trick.", type: "study" }],
-            a: [{ t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 338: Counting Bits", type: "lc" }, { t: "<span class='company-tag'>Samsung</span> LC 136: Single Number", type: "lc" }, { t: "<span class='company-tag'>Samsung</span> LC 268: Missing Number", type: "lc" }],
-            e: [{ t: "Memorize shift operators (<<, >>, >>>) in Java.", type: "study" }]
-          },
-          {
-            d: 45, title: "LLD: Design Patterns", tip: "Object Oriented Design rounds happen at Flipkart and PhonePe.", badge: "🟣 CS CORE",
-            m: [{ t: "Study: Singleton, Factory, Observer, and Strategy Patterns.", type: "core" }],
-            a: [{ t: "Code: Implement a Thread-Safe Singleton in Java.", type: "lld" }, { t: "Code: Implement the Observer pattern (Publish/Subscribe).", type: "lld" }, { t: "LLD Practice: Design a Movie Ticket Booking System.", type: "lld" }],
-            e: [{ t: "Relate the Strategy Pattern to Java's Comparator interface.", type: "core" }]
-          },
-          {
-            d: 46, title: "Math &amp; Geometry Basics", tip: "Occasionally asked in high-tier quant/algo screens (DE Shaw).", badge: "🟡 Medium",
-            m: [{ t: "Study: Sieve of Eratosthenes (Primes). GCD/Euclidean algorithm.", type: "study" }],
-            a: [{ t: "<span class='company-tag tag-deshaw'>DE Shaw</span> LC 31: Next Permutation", type: "lc" }, { t: "<span class='company-tag'>Samsung</span> LC 204: Count Primes", type: "lc" }, { t: "<span class='company-tag'>BNY Mellon</span> LC 50: Pow(x, n)", type: "lc" }],
-            e: [{ t: "Write out the Fast Exponentiation logic.", type: "study" }]
-          },
-          {
-            d: 47, title: "Profile/Resume Narrative Building", tip: "Aligning your CV for the Consulting/MBB narrative.", badge: "🚀 CAREER",
-            m: [{ t: "Review: Check CV bullets. Convert 'Built X' to 'Delivered Y impact using X'.", type: "study" }],
-            a: [{ t: "STAR Method: Write out the C-Cell platform story.", type: "study" }, { t: "STAR Method: Write out the TEDx/DehSaakaar leadership story.", type: "study" }],
-            e: [{ t: "Practice your introduction out loud for 5 minutes.", type: "study" }]
-          },
-          {
-            d: 48, title: "MOCK: DE Shaw / Flipkart Simulation", badge: "🔥 MOCK",
-            m: [{ t: "Review Heaps, Bit Manipulation, Next Permutation.", type: "study" }],
-            a: [{ t: "MOCK Q1: Next Permutation variant", type: "mock" }, { t: "MOCK Q2: Median from Data Stream", type: "mock" }, { t: "MOCK Q3: LLD Design question (e.g. Design Vending Machine)", type: "mock" }],
-            e: [{ t: "Debrief mock. Are your OOP structures clean?", type: "study" }]
-          },
-          {
-            d: 49, title: "Buffer / Catch-up Day", tip: "Clear out any unfinished tasks from the week.", badge: "🟢 BUFFER",
-            m: [{ t: "Re-attempt any failed Leetcode questions from this week.", type: "lc" }],
-            a: [{ t: "Review CS Core concepts you felt weak on in the mock.", type: "core" }],
-            e: [{ t: "Rest.", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 8, title: "The Final Polish", sub: "Mastering Speed &amp; Edge Cases",
-        days: [
-          {
-            d: 50, title: "Speed Drill: Top 5 General", badge: "⚡ SPEED",
-            m: [{ t: "Mental warm-up: Write out Binary Search and Sliding Window templates.", type: "study" }],
-            a: [{ t: "LC 42: Trapping Rain Water", type: "lc" }, { t: "LC 23: Merge k Sorted Lists", type: "lc" }, { t: "Focus purely on bug-free typing speed today.", type: "study" }],
-            e: [{ t: "Review edge cases for Trapping Rain Water.", type: "study" }]
-          },
-          {
-            d: 51, title: "Speed Drill: Matrices &amp; BFS", badge: "⚡ SPEED",
-            m: [{ t: "Mental warm-up: Write out BFS template and Tree traversals.", type: "study" }],
-            a: [{ t: "LC 146: LRU Cache", type: "lc" }, { t: "LC 54: Spiral Matrix", type: "lc" }, { t: "Time yourself: Can you do these under 40 minutes combined?", type: "study" }],
-            e: [{ t: "Review LRU Cache node wiring bugs.", type: "study" }]
-          },
-          {
-            d: 52, title: "Speed Drill: DP &amp; Strings", badge: "⚡ SPEED",
-            m: [{ t: "Mental warm-up: Write out Dijkstra and Trie templates.", type: "study" }],
-            a: [{ t: "LC 139: Word Break", type: "lc" }, { t: "LC 1143: Longest Common Subsequence", type: "lc" }, { t: "Ensure code readability is top notch.", type: "study" }],
-            e: [{ t: "Check variable names. Are they descriptive?", type: "study" }]
-          },
-          {
-            d: 53, title: "Strategy: Consulting / Analytics", tip: "Deloitte / ZS / Amex Focus.", badge: "🚀 CAREER",
-            m: [{ t: "Review: Complex SQL Window Functions and JOINs. Normalization.", type: "sql" }],
-            a: [{ t: "Behavioral: Prepare 'Guesstimate' strategies.", type: "study" }, { t: "Behavioral: Connect your EmoCam project to a business value proposition.", type: "study" }],
-            e: [{ t: "Mock a 10-minute guesstimate interview with a friend.", type: "mock" }]
-          },
-          {
-            d: 54, title: "Strategy: Startups/Product", tip: "PhonePe / Razorpay / Swiggy Focus.", badge: "🚀 CAREER",
-            m: [{ t: "Review: High-level System Design (Scalability, Caching, DB Sharding).", type: "core" }],
-            a: [{ t: "Code: Brush up on LLD and clean Object Oriented code.", type: "lld" }, { t: "Behavioral: Prepare examples of taking 'ownership'.", type: "study" }],
-            e: [{ t: "Review your C-Cell architecture.", type: "study" }]
-          },
-          {
-            d: 55, title: "MOCK: The Ultimate Gauntlet", tip: "1 Hard, 2 Mediums, SQL, and OS questions.", badge: "🔥 MOCK",
-            m: [{ t: "Deep breathing. Final mental review of all templates.", type: "study" }],
-            a: [{ t: "MOCK Q1: LC Hard (Graphs/DP)", type: "mock" }, { t: "MOCK Q2: LC Medium (Trees/Two Pointers)", type: "mock" }, { t: "MOCK Q3: Complex SQL + Explain Deadlocks.", type: "mock" }],
-            e: [{ t: "Full score debrief.", type: "study" }]
-          },
-          {
-            d: 56, title: "Buffer / Catch-up Day", badge: "🟢 BUFFER",
-            m: [{ t: "Fix any glaring weaknesses from yesterday's mock.", type: "study" }],
-            a: [{ t: "Relax. Don't code anything new.", type: "study" }],
-            e: [{ t: "Sleep.", type: "study" }]
-          }
-        ]
-      },
-      {
-        week: 9, title: "Launch Week", sub: "Confidence, Communication &amp; Execution",
-        days: [
-          {
-            d: 57, title: "Behavioral &amp; Storytelling", tip: "MBB trajectory requires stellar communication.", badge: "🚀 CAREER",
-            m: [{ t: "Rehearse all STAR stories out loud in front of a mirror.", type: "study" }],
-            a: [{ t: "Prepare 3 thoughtful questions to ask the interviewer.", type: "study" }, { t: "Refine your 'Why this company?' answer.", type: "study" }],
-            e: [{ t: "Watch mock behavioral interviews on YouTube.", type: "study" }]
-          },
-          {
-            d: 58, title: "Light Core Review", badge: "🟣 CS CORE",
-            m: [{ t: "Skim OS notes (Paging, Deadlocks, Scheduling).", type: "core" }],
-            a: [{ t: "Skim DBMS notes (Normalisation, Transactions, Indexing).", type: "core" }, { t: "Skim CN notes (TCP/UDP, OSI Model).", type: "core" }],
-            e: [{ t: "Read 3 interview experiences on Leetcode Discuss.", type: "study" }]
-          },
-          {
-            d: 59, title: "Light DSA Review", badge: "🟡 DSA",
-            m: [{ t: "Look at your list of frequently failed questions.", type: "study" }],
-            a: [{ t: "Do NOT code. Just verbally explain the approach to 5 random LC Mediums.", type: "study" }],
-            e: [{ t: "Verify IDE setup, webcam, and microphone for OAs.", type: "study" }]
-          },
-          {
-            d: 60, title: "The Calm Before", badge: "🧘 CALM",
-            m: [{ t: "Visualize the interview process going perfectly.", type: "study" }],
-            a: [{ t: "Review your MBB/Tier-1 Trajectory plan. Remember the end goal.", type: "study" }],
-            e: [{ t: "Hydrate, eat well, sleep 8 hours.", type: "study" }]
-          },
-          {
-            d: 61, title: "DAY ZERO: LAUNCH", badge: "🚀 LAUNCH",
-            m: [{ t: "Trust your preparation. You have done 60 days of grueling work.", type: "study" }],
-            a: [{ t: "You are ready.", type: "study" }],
-            e: [{ t: "Go execute.", type: "study" }]
-          }
-        ]
-      }
-    ];
+<script>
+// =====================================================================
+// DATE HELPER (Starts May 26, 2026)
+// =====================================================================
+function getPhysicalDate(dayNumber) {
+  const date = new Date(2026, 4, 26); // Month is 0-indexed; 4 = May
+  date.setDate(date.getDate() + (dayNumber - 1));
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+}
 
-    // =====================================================================
-    // STATIC HTML PANELS
-    // =====================================================================
-    const BLUEPRINT_HTML = `
+// =====================================================================
+// CURRICULUM DATA
+// =====================================================================
+const DATA = [
+  {
+    week: 1, title: "Arrays &amp; Strings", sub: "Core Fundamentals &amp; Sliding Windows",
+    days: [
+      { d:1, title:"Array Basics &amp; Two Pointers", tip:"Most SDE roles heavily index on Two Pointers for initial phone screens.", badge:"🟡 Medium",
+        m:[{t:"Study: Array iterators, time complexity, and in-place swapping.",type:"study"},{t:"Study: Two Pointer technique (opposite ends vs same direction).",type:"study"}],
+        a:[{t:"<span class='company-tag'>Swiggy</span> LC 11: Container With Most Water",type:"lc"},{t:"<span class='company-tag'>PhonePe</span> LC 121: Best Time to Buy/Sell Stock",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 26: Remove Duplicates from Sorted Array",type:"lc"}],
+        e:[{t:"CS Core: Java Memory Model for Arrays vs Objects",type:"core"}]},
+      { d:2, title:"Prefix Sum &amp; Subarrays", tip:"Prefix sums are the backbone of analytical OA questions (ZS, Deloitte).", badge:"🟡 Medium",
+        m:[{t:"Study: Prefix Sum Array logic and continuous sub-array equations.",type:"study"},{t:"Study: Kadane's Algorithm for Maximum Subarray.",type:"study"}],
+        a:[{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 238: Product of Array Except Self",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 560: Subarray Sum Equals K",type:"lc"},{t:"<span class='company-tag'>AmEx</span> LC 974: Subarray Sums Divisible by K",type:"lc"}],
+        e:[{t:"CS Core: Difference between pass-by-value and pass-by-reference in Java.",type:"core"}]},
+      { d:3, title:"String Manipulation Basics", tip:"String parsing is essential for Sprinklr and Media.net.", badge:"🟡 Medium",
+        m:[{t:"Study: ASCII character arrays, StringBuilder, and string immutability.",type:"study"},{t:"Study: Sliding window concept intro for substrings.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Tekion</span> LC 3: Longest Substring Without Repeating",type:"lc"},{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 242: Valid Anagram",type:"lc"},{t:"<span class='company-tag'>Sprinklr</span> LC 49: Group Anagrams",type:"lc"}],
+        e:[{t:"Write out the exact time complexities for Java String operations.",type:"study"}]},
+      { d:4, title:"Sliding Window Advanced", tip:"Frequent pattern in Atlassian and Swiggy OAs.", badge:"🔴 Hard",
+        m:[{t:"Study: Variable size sliding window template (expand right, shrink left).",type:"study"},{t:"Study: 'At most K' trick for exact count problems.",type:"study"}],
+        a:[{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 76: Minimum Window Substring",type:"lc"},{t:"<span class='company-tag'>PhonePe</span> LC 424: Longest Repeating Character Replacement",type:"lc"},{t:"<span class='company-tag'>Swiggy</span> LC 438: Find All Anagrams in a String",type:"lc"}],
+        e:[{t:"Draw a trace of the left/right pointers for LC 76 on paper.",type:"study"}]},
+      { d:5, title:"Matrix &amp; 2D Arrays", tip:"Matrix traversals are guaranteed in Samsung R&D and MakeMyTrip OAs.", badge:"🟡 Medium",
+        m:[{t:"Study: 2D array coordinates, direction vectors (dx, dy).",type:"study"},{t:"Study: In-place matrix rotation math.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Samsung</span> LC 54: Spiral Matrix",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 48: Rotate Image",type:"lc"},{t:"<span class='company-tag'>BNY Mellon</span> LC 73: Set Matrix Zeroes",type:"lc"}],
+        e:[{t:"Mock Setup: Configure a clean Java IDE environment for upcoming mocks.",type:"study"}]},
+      { d:6, title:"Binary Search Deep Dive", tip:"Binary Search on Answer Space is DE Shaw and Sprinklr's favorite pattern.", badge:"🔴 Hard",
+        m:[{t:"Study: Binary search templates (Exact match, Left Boundary, Right Boundary).",type:"study"},{t:"Study: Parametric Search (Binary Search on Answer).",type:"study"}],
+        a:[{t:"<span class='company-tag'>Razorpay</span> LC 33: Search in Rotated Sorted Array",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 875: Koko Eating Bananas",type:"lc"},{t:"<span class='company-tag'>Sprinklr</span> LC 410: Split Array Largest Sum",type:"lc"}],
+        e:[{t:"Review CS Core: Thread Lifecycle in Java OS concepts.",type:"core"}]},
+      { d:7, title:"MOCK: Arrays, Strings, Matrices", tip:"First simulation. Strict 90 mins.", badge:"🔥 MOCK",
+        m:[{t:"Review all templates: Sliding window, Binary Search, Prefix Sum.",type:"study"}],
+        a:[{t:"MOCK Q1: Subarray Sums (Medium)",type:"mock"},{t:"MOCK Q2: Matrix Spiral Traversal (Medium)",type:"mock"},{t:"MOCK Q3: Binary Search on Answer (Hard)",type:"mock"}],
+        e:[{t:"Analyze mock failures. Which question took > 30 mins?",type:"study"}]}
+    ]
+  },
+  {
+    week: 2, title: "Linked Lists, Stacks &amp; Queues", sub: "Atlassian &amp; Swiggy Classics",
+    days: [
+      { d:8, title:"Linked List Core", tip:"Reversals and cycles.", badge:"🟡 Medium",
+        m:[{t:"Study: Fast/Slow Pointers. Dummy Head technique.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Tekion</span> LC 206: Reverse Linked List",type:"lc"},{t:"<span class='company-tag'>BNY Mellon</span> LC 141: Linked List Cycle",type:"lc"},{t:"<span class='company-tag'>Swiggy</span> LC 143: Reorder List",type:"lc"}],
+        e:[{t:"CS Core: HashMap internals in Java.",type:"core"}]},
+      { d:9, title:"Linked List Advanced", tip:"Atlassian LFU Cache uses Doubly Linked Lists.", badge:"🔴 Hard",
+        m:[{t:"Study: Doubly Linked List from scratch.",type:"study"}],
+        a:[{t:"<span class='company-tag'>PhonePe</span> LC 25: Reverse Nodes in k-Group",type:"lc"},{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 146: LRU Cache (Must memorize)",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 2: Add Two Numbers",type:"lc"}],
+        e:[{t:"Code an LRU Cache without looking at hints.",type:"study"}]},
+      { d:10, title:"Stack Basics &amp; Parsing", tip:"Stack parsing problems are very common in MakeMyTrip and Tekion.", badge:"🟡 Medium",
+        m:[{t:"Study: LIFO logic, valid parenthesis, Postfix evaluation.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Tekion</span> LC 20: Valid Parentheses",type:"lc"},{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 150: Evaluate Reverse Polish Notation",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 394: Decode String",type:"lc"}],
+        e:[{t:"System Design Prep: Intro to Rate Limiting (Atlassian prep).",type:"core"}]},
+      { d:11, title:"Monotonic Stacks", tip:"DE Shaw and Flipkart use Monotonic Stacks to filter top candidates.", badge:"🔴 Hard",
+        m:[{t:"Study: Monotonic increasing/decreasing stack logic.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Flipkart</span> LC 739: Daily Temperatures",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 84: Largest Rectangle in Histogram",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 85: Maximal Rectangle",type:"lc"}],
+        e:[{t:"Draw the stack state transition for Histogram logic.",type:"study"}]},
+      { d:12, title:"Queues &amp; Deques", tip:"Sliding window maximum with Deque is a top-tier favorite.", badge:"🔴 Hard",
+        m:[{t:"Study: Queue vs Deque implementations.",type:"study"}],
+        a:[{t:"<span class='company-tag'>PhonePe</span> LC 239: Sliding Window Maximum (Deque)",type:"lc"},{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 346: Moving Average from Data Stream",type:"lc"},{t:"<span class='company-tag'>Swiggy</span> LC 933: Number of Recent Calls",type:"lc"}],
+        e:[{t:"CS Core: Differences between TCP and UDP protocols (CN).",type:"core"}]},
+      { d:13, title:"CS CORE: OOPs Deep Dive", tip:"DE Shaw, BNY Mellon, and Atlassian ask deep OOPs questions.", badge:"🟣 CS CORE",
+        m:[{t:"Study: Abstraction, Encapsulation, Interface vs Abstract Class.",type:"core"},{t:"Study: Polymorphism (Compile time vs Runtime).",type:"core"}],
+        a:[{t:"Code: Design a Parking Lot in Java (Classes, Enums, Interfaces).",type:"lld"},{t:"Code: Design an Elevator System.",type:"lld"},{t:"Study: SOLID Principles and explain each with an example.",type:"core"}],
+        e:[{t:"Review Java final, finally, finalize keywords.",type:"core"}]},
+      { d:14, title:"MOCK: Stacks, LL, OOP", tip:"Simulate an Atlassian technical screen.", badge:"🔥 MOCK",
+        m:[{t:"Review LRU Cache and Monotonic Stack templates.",type:"study"}],
+        a:[{t:"MOCK Q1: Reverse k-group Linked List",type:"mock"},{t:"MOCK Q2: Next Greater Element variant",type:"mock"},{t:"MOCK Q3: Design hit counter (OOP + Queue)",type:"mock"}],
+        e:[{t:"REST Day.",type:"study"}]}
+    ]
+  },
+  {
+    week: 3, title: "Trees &amp; BSTs", sub: "DE Shaw &amp; MakeMyTrip Favorites",
+    days: [
+      { d:15, title:"Tree Traversals &amp; Depth", tip:"Recursion fundamentals. Expect bug-free tree code.", badge:"🟡 Medium",
+        m:[{t:"Study: Inorder, Preorder, Postorder. BFS Level Order.",type:"study"}],
+        a:[{t:"<span class='company-tag'>MakeMyTrip</span> LC 102: Binary Tree Level Order Traversal",type:"lc"},{t:"<span class='company-tag'>Flipkart</span> LC 103: Binary Tree Zigzag Level Order",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 199: Binary Tree Right Side View",type:"lc"}],
+        e:[{t:"Code an iterative Inorder traversal.",type:"study"}]},
+      { d:16, title:"Tree Path Problems", tip:"Path Sums and Diameters are everywhere. Crucial for Sprinklr.", badge:"🟡 Medium",
+        m:[{t:"Study: Returning values up the recursive stack vs global state.",type:"study"}],
+        a:[{t:"<span class='company-tag'>PhonePe</span> LC 236: Lowest Common Ancestor",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 124: Binary Tree Maximum Path Sum (Hard)",type:"lc"},{t:"<span class='company-tag'>Tekion</span> LC 113: Path Sum II",type:"lc"}],
+        e:[{t:"Trace Maximum Path Sum logic recursively on paper.",type:"study"}]},
+      { d:17, title:"Binary Search Trees", tip:"MakeMyTrip and Samsung heavily rely on BST properties.", badge:"🟡 Medium",
+        m:[{t:"Study: BST properties (Inorder is sorted). Insertion/Deletion.",type:"study"}],
+        a:[{t:"<span class='company-tag'>BNY Mellon</span> LC 98: Validate Binary Search Tree",type:"lc"},{t:"<span class='company-tag'>Samsung</span> LC 230: Kth Smallest Element in a BST",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 108: Convert Sorted Array to BST",type:"lc"}],
+        e:[{t:"CS Core: OS Process vs Thread differences.",type:"core"}]},
+      { d:18, title:"Tree Construction &amp; Serialization", tip:"Serialization is a classic Hard question.", badge:"🔴 Hard",
+        m:[{t:"Study: Building trees from Inorder + Preorder arrays. Serialization strings.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Flipkart</span> LC 105: Construct BT from Preorder and Inorder",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 297: Serialize and Deserialize Binary Tree",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 114: Flatten Binary Tree to Linked List",type:"lc"}],
+        e:[{t:"Code the Tree Serialization using a Queue (BFS approach).",type:"study"}]},
+      { d:19, title:"Tries (Prefix Trees)", tip:"Sprinklr almost always asks a Trie question in their 3rd OA slot.", badge:"🔴 Hard",
+        m:[{t:"Study: TrieNode structure, insert, and search operations.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Sprinklr</span> LC 208: Implement Trie",type:"lc"},{t:"<span class='company-tag'>Sprinklr</span> LC 212: Word Search II (Trie + DFS)",type:"lc"},{t:"<span class='company-tag'>PhonePe</span> LC 1268: Search Suggestions System",type:"lc"}],
+        e:[{t:"CS Core: Paging and Virtual Memory in OS.",type:"core"}]},
+      { d:20, title:"CS CORE: OS Fundamentals", tip:"DE Shaw technical interviews have a dedicated OS/DBMS section.", badge:"🟣 CS CORE",
+        m:[{t:"Study: Deadlocks (4 conditions, Banker's Algorithm).",type:"core"},{t:"Study: CPU Scheduling algorithms (FCFS, SJF, RR).",type:"core"}],
+        a:[{t:"Study: Paging vs Segmentation, TLB, Page Fault handling.",type:"core"},{t:"Study: Mutex vs Semaphore. Producer-Consumer problem.",type:"core"},{t:"Quiz: Solve 15 OS MCQs on GeeksForGeeks.",type:"core"}],
+        e:[{t:"Link your Transit Booking project to OS concepts.",type:"study"}]},
+      { d:21, title:"MOCK: Trees &amp; OS", tip:"Simulate a DE Shaw hybrid round.", badge:"🔥 MOCK",
+        m:[{t:"Review all Tree traversals, LCA, Serialization logic.",type:"study"}],
+        a:[{t:"MOCK Q1: BST Validation / Kth Smallest",type:"mock"},{t:"MOCK Q2: Maximum Path Sum",type:"mock"},{t:"MOCK Q3: Word Search II (Trie)",type:"mock"},{t:"MOCK Q4: Explain Banker's Algorithm verbally.",type:"mock"}],
+        e:[{t:"Evaluate your Trie implementation speed. Must be under 15 mins.",type:"study"}]}
+    ]
+  },
+  {
+    week: 4, title: "Graphs Core", sub: "Swiggy &amp; Innovaccer Targets",
+    days: [
+      { d:22, title:"Graph Fundamentals &amp; BFS", tip:"Swiggy tests BFS on grids heavily.", badge:"🟡 Medium",
+        m:[{t:"Study: Graph representations (Adjacency List vs Matrix). Grid BFS.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Swiggy</span> LC 200: Number of Islands",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 994: Rotting Oranges",type:"lc"},{t:"<span class='company-tag'>Innovaccer</span> LC 542: 01 Matrix",type:"lc"}],
+        e:[{t:"Code a standard Grid BFS from memory.",type:"study"}]},
+      { d:23, title:"DFS &amp; Connected Components", tip:"Flipkart likes DFS backtracking on grids.", badge:"🟡 Medium",
+        m:[{t:"Study: Recursive DFS vs Iterative DFS. Cycle detection.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Flipkart</span> LC 695: Max Area of Island",type:"lc"},{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 323: Number of Connected Components",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 130: Surrounded Regions",type:"lc"}],
+        e:[{t:"CS Core: Database Normalization (1NF to BCNF).",type:"core"}]},
+      { d:24, title:"Topological Sort", tip:"Course Schedule is highly asked across the board.", badge:"🟡 Medium",
+        m:[{t:"Study: Kahn's Algorithm (In-degree array + Queue). DFS Topo Sort.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Tekion</span> LC 207: Course Schedule",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 269: Alien Dictionary (Hard)",type:"lc"},{t:"<span class='company-tag'>Flipkart</span> LC 310: Minimum Height Trees",type:"lc"}],
+        e:[{t:"Draw out the Alien Dictionary graph logic on paper.",type:"study"}]},
+      { d:25, title:"Dijkstra's Algorithm", tip:"Shortest path on weighted graphs (Swiggy routing).", badge:"🔴 Hard",
+        m:[{t:"Study: PriorityQueue based Dijkstra.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Swiggy</span> LC 743: Network Delay Time",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 787: Cheapest Flights Within K Stops",type:"lc"},{t:"<span class='company-tag'>Innovaccer</span> LC 1631: Path With Minimum Effort",type:"lc"}],
+        e:[{t:"Memorize the Java PriorityQueue syntax for Dijkstra.",type:"study"}]},
+      { d:26, title:"Union Find (DSU)", tip:"Disjoint Set Union is a cheat code for many graph problems at Sprinklr.", badge:"🔴 Hard",
+        m:[{t:"Study: Path Compression and Union by Rank. Kruskal's MST.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Flipkart</span> LC 684: Redundant Connection",type:"lc"},{t:"<span class='company-tag'>Sprinklr</span> LC 990: Satisfiability of Equality Equations",type:"lc"},{t:"<span class='company-tag'>Samsung</span> LC 547: Number of Provinces",type:"lc"}],
+        e:[{t:"Write a reusable DSU class in Java and save it.",type:"study"}]},
+      { d:27, title:"CS CORE: DBMS Fundamentals", tip:"Crucial for Data/Analytics tracks at ZS Associates and Deloitte.", badge:"🟣 CS CORE",
+        m:[{t:"Study: ACID Properties with real-world banking examples.",type:"core"},{t:"Study: Transaction Isolation Levels.",type:"core"}],
+        a:[{t:"Study: B-Trees and Indexing. How databases search so fast.",type:"core"},{t:"Study: SQL vs NoSQL. When to use MongoDB vs PostgreSQL.",type:"core"},{t:"Quiz: Solve 15 DBMS MCQs.",type:"core"}],
+        e:[{t:"Map your C-Cell SQL Schema. Is it in 3NF? Justify it.",type:"study"}]},
+      { d:28, title:"MOCK: Graphs &amp; DBMS", tip:"Simulate a Swiggy / Innovaccer engineering round.", badge:"🔥 MOCK",
+        m:[{t:"Review Dijkstra and DSU implementations.",type:"study"}],
+        a:[{t:"MOCK Q1: Graph BFS / Connected Components",type:"mock"},{t:"MOCK Q2: Topological Sort",type:"mock"},{t:"MOCK Q3: Dijkstra Algorithm",type:"mock"},{t:"MOCK Q4: Explain indexing and query optimization.",type:"mock"}],
+        e:[{t:"Check your DSU implementation speed.",type:"study"}]}
+    ]
+  },
+  {
+    week: 5, title: "DP Phase 1", sub: "The Ultimate Separator for Tier 1",
+    days: [
+      { d:29, title:"1D DP &amp; Memoization", tip:"Dynamic Programming is the gatekeeper for Flipkart and Sprinklr.", badge:"🟡 Medium",
+        m:[{t:"Study: Top-down vs Bottom-up. State definition.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Tekion</span> LC 70: Climbing Stairs",type:"lc"},{t:"<span class='company-tag'>PhonePe</span> LC 198: House Robber",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 139: Word Break",type:"lc"}],
+        e:[{t:"Draw the recursive tree for House Robber.",type:"study"}]},
+      { d:30, title:"Knapsack Variants", tip:"0/1 Knapsack is a guaranteed DP archetype in OAs.", badge:"🟡 Medium",
+        m:[{t:"Study: 0/1 Knapsack logic and 2D to 1D space optimization.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Flipkart</span> LC 416: Partition Equal Subset Sum",type:"lc"},{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 322: Coin Change",type:"lc"},{t:"<span class='company-tag'>Sprinklr</span> LC 494: Target Sum",type:"lc"}],
+        e:[{t:"Write out the 1D space optimized version of 0/1 Knapsack.",type:"study"}]},
+      { d:31, title:"2D DP (Grids &amp; Strings)", tip:"LCS and Grid paths are standard in DE Shaw.", badge:"🟡 Medium",
+        m:[{t:"Study: Longest Common Subsequence logic. Grid path transitions.",type:"study"}],
+        a:[{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 1143: Longest Common Subsequence",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 62: Unique Paths",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 72: Edit Distance (Hard)",type:"lc"}],
+        e:[{t:"Draw the 2D DP matrix for Edit Distance on paper.",type:"study"}]},
+      { d:32, title:"DP Subsequences", tip:"LIS is a foundational algorithm you must memorize.", badge:"🔴 Hard",
+        m:[{t:"Study: Longest Increasing Subsequence (O(N^2) vs O(N log N)).",type:"study"}],
+        a:[{t:"<span class='company-tag'>Flipkart</span> LC 300: Longest Increasing Subsequence",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 516: Longest Palindromic Subsequence",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 1312: Min Insertions to Make a String Palindrome",type:"lc"}],
+        e:[{t:"Learn the Binary Search approach for LIS (Patience Sorting).",type:"study"}]},
+      { d:33, title:"SQL CORE: Joins &amp; Aggregations", tip:"ZS Associates explicitly tests complex SQL writing.", badge:"🟢 SQL",
+        m:[{t:"Study: SQL JOINs (INNER, LEFT, RIGHT, FULL, CROSS).",type:"sql"},{t:"Study: GROUP BY, HAVING vs WHERE clauses.",type:"sql"}],
+        a:[{t:"HackerRank/Leetcode: Solve 10 Easy/Medium SQL queries.",type:"sql"},{t:"LC SQL 175: Combine Two Tables",type:"lc"},{t:"LC SQL 176: Second Highest Salary",type:"lc"}],
+        e:[{t:"Write out the SQL execution order.",type:"sql"}]},
+      { d:34, title:"SQL CORE: Window Functions", tip:"Analytics roles (Deloitte, ZS, Amex) expect Window Functions.", badge:"🟢 SQL",
+        m:[{t:"Study: ROW_NUMBER(), RANK(), DENSE_RANK().",type:"sql"},{t:"Study: LEAD(), LAG() and OVER(PARTITION BY).",type:"sql"}],
+        a:[{t:"HackerRank/Leetcode: Solve 5 Advanced Window Function SQLs.",type:"sql"},{t:"LC SQL 185: Department Top 3 Salaries (Hard)",type:"lc"},{t:"LC SQL 262: Trips and Users (Hard)",type:"lc"}],
+        e:[{t:"Review your C-Cell SQL tables and write a complex join query for it.",type:"sql"}]},
+      { d:35, title:"MOCK: ZS Associates Analytics Track", tip:"Simulate an Analytics/Consulting tech round (DSA + SQL).", badge:"🔥 MOCK",
+        m:[{t:"Review Window functions and DP templates.",type:"study"}],
+        a:[{t:"MOCK Q1: 1D DP (House Robber variant)",type:"mock"},{t:"MOCK Q2: 2D DP (Grid Path variant)",type:"mock"},{t:"MOCK Q3: SQL Hard (Top N per category)",type:"mock"}],
+        e:[{t:"Rest and recover.",type:"study"}]}
+    ]
+  },
+  {
+    week: 6, title: "DP Phase 2, Intervals, Backtracking", sub: "Atlassian &amp; PhonePe Preparation",
+    days: [
+      { d:36, title:"Intervals &amp; Sweep Line", tip:"Merge Intervals is a must-know.", badge:"🟡 Medium",
+        m:[{t:"Study: Sorting intervals, checking overlaps. Sweep Line algorithm.",type:"study"}],
+        a:[{t:"<span class='company-tag'>PhonePe</span> LC 56: Merge Intervals",type:"lc"},{t:"<span class='company-tag'>Swiggy</span> LC 57: Insert Interval",type:"lc"},{t:"<span class='company-tag'>Tekion</span> LC 252/253: Meeting Rooms I &amp; II",type:"lc"}],
+        e:[{t:"Write out the custom Comparator logic in Java for 2D arrays.",type:"study"}]},
+      { d:37, title:"Backtracking Core", tip:"Permutations and Combinations. Crucial for DE Shaw.", badge:"🟡 Medium",
+        m:[{t:"Study: Backtracking template (Choose, Explore, Un-choose).",type:"study"}],
+        a:[{t:"<span class='company-tag'>MakeMyTrip</span> LC 46: Permutations",type:"lc"},{t:"<span class='company-tag'>Samsung</span> LC 78: Subsets",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 39: Combination Sum",type:"lc"}],
+        e:[{t:"Draw out the entire recursion tree for Subsets of [1,2,3].",type:"study"}]},
+      { d:38, title:"Backtracking Hard", tip:"N-Queens and Word Search are frequent Hard questions.", badge:"🔴 Hard",
+        m:[{t:"Study: Constraint satisfaction and pruning branches.",type:"study"}],
+        a:[{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 51: N-Queens",type:"lc"},{t:"<span class='company-tag'>PhonePe</span> LC 79: Word Search",type:"lc"},{t:"<span class='company-tag'>Flipkart</span> LC 131: Palindrome Partitioning",type:"lc"}],
+        e:[{t:"Code N-Queens using 1D arrays for diagonals.",type:"study"}]},
+      { d:39, title:"Greedy Algorithms", tip:"Greedy proofs are tricky. Know the classics.", badge:"🟡 Medium",
+        m:[{t:"Study: Why Greedy works vs DP. Local optimal to global optimal.",type:"study"}],
+        a:[{t:"<span class='company-tag'>MakeMyTrip</span> LC 55: Jump Game",type:"lc"},{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 135: Candy (Hard)",type:"lc"},{t:"<span class='company-tag'>Razorpay</span> LC 134: Gas Station",type:"lc"}],
+        e:[{t:"Prove verbally why the greedy choice in Gas Station works.",type:"study"}]},
+      { d:40, title:"Advanced DP (Intervals)", tip:"Sprinklr Hard round often has an Interval DP question.", badge:"🔴 Hard",
+        m:[{t:"Study: MCM (Matrix Chain Multiplication) pattern. Burst Balloons logic.",type:"study"}],
+        a:[{t:"<span class='company-tag'>Sprinklr</span> LC 312: Burst Balloons (Hard)",type:"lc"},{t:"<span class='company-tag'>Sprinklr</span> LC 1039: Minimum Score Triangulation of Polygon",type:"lc"},{t:"<span class='company-tag'>MakeMyTrip</span> LC 1000: Minimum Cost to Merge Stones",type:"lc"}],
+        e:[{t:"Review Interval DP transitions.",type:"study"}]},
+      { d:41, title:"CS CORE: System Design Intro", tip:"Crucial for Atlassian and later MBB tech consulting interviews.", badge:"🟣 CS CORE",
+        m:[{t:"Study: Vertical vs Horizontal Scaling. Load Balancers.",type:"core"},{t:"Study: CAP Theorem. Caching Strategies.",type:"core"}],
+        a:[{t:"Watch: Design URL Shortener (TinyURL) on YouTube.",type:"core"}],
+        e:[{t:"Relate CAP theorem to your Desportivos live scoreboard project.",type:"study"}]},
+      { d:42, title:"MOCK: PhonePe / Atlassian Sim", tip:"Simulate a Tier-1 tech round.", badge:"🔥 MOCK",
+        m:[{t:"Review Intervals, Greedy, and Backtracking.",type:"study"}],
+        a:[{t:"MOCK Q1: Merge Intervals variant",type:"mock"},{t:"MOCK Q2: Gas Station / Jump Game variant",type:"mock"},{t:"MOCK Q3: N-Queens or Word Search",type:"mock"}],
+        e:[{t:"Critique your code cleanliness and variable naming.",type:"study"}]}
+    ]
+  },
+  {
+    week: 7, title: "Heaps, Bit Manipulation, LLD", sub: "Flipkart &amp; DE Shaw Polish",
+    days: [
+      { d:43, title:"Heaps &amp; Priority Queues", tip:"Top K elements and Median stream.", badge:"🟡 Medium",
+        m:[{t:"Study: Heapify, Insert, Delete logic. Two Heaps pattern.",type:"study"}],
+        a:[{t:"<span class='company-tag tag-atl'>Atlassian</span> LC 347: Top K Frequent Elements",type:"lc"},{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 295: Find Median from Data Stream (Hard)",type:"lc"},{t:"<span class='company-tag'>Swiggy</span> LC 215: Kth Largest Element in an Array",type:"lc"}],
+        e:[{t:"Code a Min-Heap from scratch.",type:"study"}]},
+      { d:44, title:"Bit Manipulation", tip:"DE Shaw and Samsung love Bit Tricks in their MCQs and OAs.", badge:"🟡 Medium",
+        m:[{t:"Study: XOR properties (x^x = 0). Finding set bits. n &amp; (n-1) trick.",type:"study"}],
+        a:[{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 338: Counting Bits",type:"lc"},{t:"<span class='company-tag'>Samsung</span> LC 136: Single Number",type:"lc"},{t:"<span class='company-tag'>Samsung</span> LC 268: Missing Number",type:"lc"}],
+        e:[{t:"Memorize shift operators (<<, >>, >>>) in Java.",type:"study"}]},
+      { d:45, title:"LLD: Design Patterns", tip:"Object Oriented Design rounds happen at Flipkart and PhonePe.", badge:"🟣 CS CORE",
+        m:[{t:"Study: Singleton, Factory, Observer, and Strategy Patterns.",type:"core"}],
+        a:[{t:"Code: Implement a Thread-Safe Singleton in Java.",type:"lld"},{t:"Code: Implement the Observer pattern (Publish/Subscribe).",type:"lld"},{t:"LLD Practice: Design a Movie Ticket Booking System.",type:"lld"}],
+        e:[{t:"Relate the Strategy Pattern to Java's Comparator interface.",type:"core"}]},
+      { d:46, title:"Math &amp; Geometry Basics", tip:"Occasionally asked in high-tier quant/algo screens (DE Shaw).", badge:"🟡 Medium",
+        m:[{t:"Study: Sieve of Eratosthenes (Primes). GCD/Euclidean algorithm.",type:"study"}],
+        a:[{t:"<span class='company-tag tag-deshaw'>DE Shaw</span> LC 31: Next Permutation",type:"lc"},{t:"<span class='company-tag'>Samsung</span> LC 204: Count Primes",type:"lc"},{t:"<span class='company-tag'>BNY Mellon</span> LC 50: Pow(x, n)",type:"lc"}],
+        e:[{t:"Write out the Fast Exponentiation logic.",type:"study"}]},
+      { d:47, title:"Profile/Resume Narrative Building", tip:"Aligning your CV for the Consulting/MBB narrative.", badge:"🚀 CAREER",
+        m:[{t:"Review: Check CV bullets. Convert 'Built X' to 'Delivered Y impact using X'.",type:"study"}],
+        a:[{t:"STAR Method: Write out the C-Cell platform story.",type:"study"},{t:"STAR Method: Write out the TEDx/DehSaakaar leadership story.",type:"study"}],
+        e:[{t:"Practice your introduction out loud for 5 minutes.",type:"study"}]},
+      { d:48, title:"MOCK: DE Shaw / Flipkart Simulation", badge:"🔥 MOCK",
+        m:[{t:"Review Heaps, Bit Manipulation, Next Permutation.",type:"study"}],
+        a:[{t:"MOCK Q1: Next Permutation variant",type:"mock"},{t:"MOCK Q2: Median from Data Stream",type:"mock"},{t:"MOCK Q3: LLD Design question (e.g. Design Vending Machine)",type:"mock"}],
+        e:[{t:"Debrief mock. Are your OOP structures clean?",type:"study"}]},
+      { d:49, title:"Buffer / Catch-up Day", tip:"Clear out any unfinished tasks from the week.", badge:"🟢 BUFFER",
+        m:[{t:"Re-attempt any failed Leetcode questions from this week.",type:"lc"}],
+        a:[{t:"Review CS Core concepts you felt weak on in the mock.",type:"core"}],
+        e:[{t:"Rest.",type:"study"}]}
+    ]
+  },
+  {
+    week: 8, title: "The Final Polish", sub: "Mastering Speed &amp; Edge Cases",
+    days: [
+      { d:50, title:"Speed Drill: Top 5 General", badge:"⚡ SPEED",
+        m:[{t:"Mental warm-up: Write out Binary Search and Sliding Window templates.",type:"study"}],
+        a:[{t:"LC 42: Trapping Rain Water",type:"lc"},{t:"LC 23: Merge k Sorted Lists",type:"lc"},{t:"Focus purely on bug-free typing speed today.",type:"study"}],
+        e:[{t:"Review edge cases for Trapping Rain Water.",type:"study"}]},
+      { d:51, title:"Speed Drill: Matrices &amp; BFS", badge:"⚡ SPEED",
+        m:[{t:"Mental warm-up: Write out BFS template and Tree traversals.",type:"study"}],
+        a:[{t:"LC 146: LRU Cache",type:"lc"},{t:"LC 54: Spiral Matrix",type:"lc"},{t:"Time yourself: Can you do these under 40 minutes combined?",type:"study"}],
+        e:[{t:"Review LRU Cache node wiring bugs.",type:"study"}]},
+      { d:52, title:"Speed Drill: DP &amp; Strings", badge:"⚡ SPEED",
+        m:[{t:"Mental warm-up: Write out Dijkstra and Trie templates.",type:"study"}],
+        a:[{t:"LC 139: Word Break",type:"lc"},{t:"LC 1143: Longest Common Subsequence",type:"lc"},{t:"Ensure code readability is top notch.",type:"study"}],
+        e:[{t:"Check variable names. Are they descriptive?",type:"study"}]},
+      { d:53, title:"Strategy: Consulting / Analytics", tip:"Deloitte / ZS / Amex Focus.", badge:"🚀 CAREER",
+        m:[{t:"Review: Complex SQL Window Functions and JOINs. Normalization.",type:"sql"}],
+        a:[{t:"Behavioral: Prepare 'Guesstimate' strategies.",type:"study"},{t:"Behavioral: Connect your EmoCam project to a business value proposition.",type:"study"}],
+        e:[{t:"Mock a 10-minute guesstimate interview with a friend.",type:"mock"}]},
+      { d:54, title:"Strategy: Startups/Product", tip:"PhonePe / Razorpay / Swiggy Focus.", badge:"🚀 CAREER",
+        m:[{t:"Review: High-level System Design (Scalability, Caching, DB Sharding).",type:"core"}],
+        a:[{t:"Code: Brush up on LLD and clean Object Oriented code.",type:"lld"},{t:"Behavioral: Prepare examples of taking 'ownership'.",type:"study"}],
+        e:[{t:"Review your C-Cell architecture.",type:"study"}]},
+      { d:55, title:"MOCK: The Ultimate Gauntlet", tip:"1 Hard, 2 Mediums, SQL, and OS questions.", badge:"🔥 MOCK",
+        m:[{t:"Deep breathing. Final mental review of all templates.",type:"study"}],
+        a:[{t:"MOCK Q1: LC Hard (Graphs/DP)",type:"mock"},{t:"MOCK Q2: LC Medium (Trees/Two Pointers)",type:"mock"},{t:"MOCK Q3: Complex SQL + Explain Deadlocks.",type:"mock"}],
+        e:[{t:"Full score debrief.",type:"study"}]},
+      { d:56, title:"Buffer / Catch-up Day", badge:"🟢 BUFFER",
+        m:[{t:"Fix any glaring weaknesses from yesterday's mock.",type:"study"}],
+        a:[{t:"Relax. Don't code anything new.",type:"study"}],
+        e:[{t:"Sleep.",type:"study"}]}
+    ]
+  },
+  {
+    week: 9, title: "Launch Week", sub: "Confidence, Communication &amp; Execution",
+    days: [
+      { d:57, title:"Behavioral &amp; Storytelling", tip:"MBB trajectory requires stellar communication.", badge:"🚀 CAREER",
+        m:[{t:"Rehearse all STAR stories out loud in front of a mirror.",type:"study"}],
+        a:[{t:"Prepare 3 thoughtful questions to ask the interviewer.",type:"study"},{t:"Refine your 'Why this company?' answer.",type:"study"}],
+        e:[{t:"Watch mock behavioral interviews on YouTube.",type:"study"}]},
+      { d:58, title:"Light Core Review", badge:"🟣 CS CORE",
+        m:[{t:"Skim OS notes (Paging, Deadlocks, Scheduling).",type:"core"}],
+        a:[{t:"Skim DBMS notes (Normalisation, Transactions, Indexing).",type:"core"},{t:"Skim CN notes (TCP/UDP, OSI Model).",type:"core"}],
+        e:[{t:"Read 3 interview experiences on Leetcode Discuss.",type:"study"}]},
+      { d:59, title:"Light DSA Review", badge:"🟡 DSA",
+        m:[{t:"Look at your list of frequently failed questions.",type:"study"}],
+        a:[{t:"Do NOT code. Just verbally explain the approach to 5 random LC Mediums.",type:"study"}],
+        e:[{t:"Verify IDE setup, webcam, and microphone for OAs.",type:"study"}]},
+      { d:60, title:"The Calm Before", badge:"🧘 CALM",
+        m:[{t:"Visualize the interview process going perfectly.",type:"study"}],
+        a:[{t:"Review your MBB/Tier-1 Trajectory plan. Remember the end goal.",type:"study"}],
+        e:[{t:"Hydrate, eat well, sleep 8 hours.",type:"study"}]},
+      { d:61, title:"DAY ZERO: LAUNCH", badge:"🚀 LAUNCH",
+        m:[{t:"Trust your preparation. You have done 60 days of grueling work.",type:"study"}],
+        a:[{t:"You are ready.",type:"study"}],
+        e:[{t:"Go execute.",type:"study"}]}
+    ]
+  }
+];
+
+// =====================================================================
+// STATIC HTML PANELS
+// =====================================================================
+const BLUEPRINT_HTML = `
 <div class="content-panel active" id="panel-blueprint">
   <div class="blueprint-grid">
     <div class="bp-col trajectory">
@@ -1286,104 +546,184 @@
   </div>
 </div>`;
 
-    const CONTESTS_HTML = `
-<div class="content-panel" id="panel-contests">
-  <div style="background:rgba(255,238,0,0.1); border:2px solid var(--yellow); padding:1rem; border-radius:12px; margin-bottom:2rem;">
-    <h3 style="color:var(--yellow); font-family:'IBM Plex Mono', monospace;">🏆 UPCOMING CONTEST RADAR</h3>
-    <p style="color:var(--text); font-size:0.9rem; margin-top:0.5rem;">Click any platform badge to open its contest page. Codeforces times vary — always verify on their site.</p>
+const CONTESTS_DATA = [
+  { month: "May 2026", items: [
+    { plt:"cc", date:"May 27 (Wed)", label:"Starters" },
+    { plt:"cf", date:"May 28 (Thu)", label:"Round (Div. 2/3)" },
+    { plt:"lc", date:"May 30 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", date:"May 31 (Sun)", label:"Weekly Contest" }
+  ]},
+  { month: "June 2026", items: [
+    { plt:"cc", date:"Jun 03 (Wed)", label:"Starters" },
+    { plt:"lc", date:"Jun 07 (Sun)", label:"Weekly Contest" },
+    { plt:"cf", date:"Jun 09 (Tue)", label:"Round (Div. 2)" },
+    { plt:"cc", date:"Jun 10 (Wed)", label:"Starters" },
+    { plt:"lc", date:"Jun 13 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", date:"Jun 14 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", date:"Jun 17 (Wed)", label:"Starters" },
+    { plt:"cf", date:"Jun 18 (Thu)", label:"Round (Div. 3)" },
+    { plt:"lc", date:"Jun 21 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", date:"Jun 24 (Wed)", label:"Starters" },
+    { plt:"lc", date:"Jun 27 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", date:"Jun 28 (Sun)", label:"Weekly Contest" },
+    { plt:"cf", date:"Jun 30 (Tue)", label:"Round (Div. 2/4)" }
+  ]},
+  { month: "July 2026", items: [
+    { plt:"cc", date:"Jul 01 (Wed)", label:"Starters" },
+    { plt:"lc", date:"Jul 05 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", date:"Jul 08 (Wed)", label:"Starters" },
+    { plt:"cf", date:"Jul 09 (Thu)", label:"Round (Div. 2)" },
+    { plt:"lc", date:"Jul 11 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", date:"Jul 12 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", date:"Jul 15 (Wed)", label:"Starters" },
+    { plt:"cf", date:"Jul 18 (Sat)", label:"Round (Div. 3)" },
+    { plt:"lc", date:"Jul 19 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", date:"Jul 22 (Wed)", label:"Starters" },
+    { plt:"lc", date:"Jul 25 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", date:"Jul 26 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", date:"Jul 29 (Wed)", label:"Starters" }
+  ]}
+];
+
+const PLT_URLS = { lc:"https://leetcode.com/contest/", cf:"https://codeforces.com/contests", cc:"https://www.codechef.com/contests" };
+const PLT_NAMES = { lc:"LeetCode", cf:"Codeforces", cc:"CodeChef" };
+
+// Assign global contest IDs
+let CONTEST_IDS = [];
+CONTESTS_DATA.forEach((month, mi) => {
+  month.items.forEach((_, ci) => { CONTEST_IDS.push(`contest_${mi}_${ci}`); });
+});
+
+function buildContestsHTML() {
+  let totalDone = 0, totalAll = CONTEST_IDS.length;
+  CONTEST_IDS.forEach(id => { if (userState[id]) totalDone++; });
+  const pct = totalAll ? Math.round((totalDone / totalAll) * 100) : 0;
+
+  let html = `<div class="content-panel" id="panel-contests">
+  <div style="background:rgba(255,238,0,0.1); border:2px solid var(--yellow); padding:1rem; border-radius:12px; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;">
+    <div>
+      <h3 style="color:var(--yellow); font-family:'IBM Plex Mono', monospace;">🏆 UPCOMING CONTEST RADAR</h3>
+      <p style="color:var(--text); font-size:0.85rem; margin-top:0.3rem;">Click a badge to open the contest page. Check off contests you've participated in.</p>
+    </div>
+    <div style="text-align:right; min-width:160px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:0.8rem; color:var(--muted); margin-bottom:0.3rem; display:flex; justify-content:space-between;"><span>PARTICIPATED</span><span style="color:var(--yellow);">${totalDone}/${totalAll}</span></div>
+      <div class="contest-progress-bar-bg"><div class="contest-progress-bar-fill" id="contest-global-bar" style="width:${pct}%"></div></div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--green); text-align:right; margin-top:0.3rem;" id="contest-global-pct">${pct}%</div>
+    </div>
   </div>
-  <div class="calendar-grid">
-    <div class="month-card">
-      <h3>May 2026</h3>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">May 27 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-cf" href="https://codeforces.com/contests" target="_blank" rel="noopener noreferrer">Codeforces</a><span class="contest-date">May 28 (Thu)</span> Round (Div. 2/3)</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">May 30 (Sat)</span> Biweekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">May 31 (Sun)</span> Weekly Contest</div>
-    </div>
-    <div class="month-card">
-      <h3>June 2026</h3>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jun 03 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jun 07 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cf" href="https://codeforces.com/contests" target="_blank" rel="noopener noreferrer">Codeforces</a><span class="contest-date">Jun 09 (Tue)</span> Round (Div. 2)</div>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jun 10 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jun 13 (Sat)</span> Biweekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jun 14 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jun 17 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-cf" href="https://codeforces.com/contests" target="_blank" rel="noopener noreferrer">Codeforces</a><span class="contest-date">Jun 18 (Thu)</span> Round (Div. 3)</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jun 21 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jun 24 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jun 27 (Sat)</span> Biweekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jun 28 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cf" href="https://codeforces.com/contests" target="_blank" rel="noopener noreferrer">Codeforces</a><span class="contest-date">Jun 30 (Tue)</span> Round (Div. 2/4)</div>
-    </div>
-    <div class="month-card">
-      <h3>July 2026</h3>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jul 01 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jul 05 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jul 08 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-cf" href="https://codeforces.com/contests" target="_blank" rel="noopener noreferrer">Codeforces</a><span class="contest-date">Jul 09 (Thu)</span> Round (Div. 2)</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jul 11 (Sat)</span> Biweekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jul 12 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jul 15 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-cf" href="https://codeforces.com/contests" target="_blank" rel="noopener noreferrer">Codeforces</a><span class="contest-date">Jul 18 (Sat)</span> Round (Div. 3)</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jul 19 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jul 22 (Wed)</span> Starters</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jul 25 (Sat)</span> Biweekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-lc" href="https://leetcode.com/contest/" target="_blank" rel="noopener noreferrer">LeetCode</a><span class="contest-date">Jul 26 (Sun)</span> Weekly Contest</div>
-      <div class="contest-item"><a class="badge-platform plt-cc" href="https://www.codechef.com/contests" target="_blank" rel="noopener noreferrer">CodeChef</a><span class="contest-date">Jul 29 (Wed)</span> Starters</div>
-    </div>
-  </div>
-</div>`;
+  <div class="calendar-grid">`;
 
-    // =====================================================================
-    // STATE MANAGEMENT
-    // =====================================================================
-    const STORAGE_KEY = 'praneel_placement_v4_tracker';
-    let userState = {};
+  let globalIdx = 0;
+  CONTESTS_DATA.forEach((month, mi) => {
+    const monthDone = month.items.filter((_, ci) => userState[`contest_${mi}_${ci}`]).length;
+    const monthPct = Math.round((monthDone / month.items.length) * 100);
+    html += `<div class="month-card">
+      <h3>${month.month}</h3>
+      <div class="contest-progress-bar-bg" style="margin-bottom:0.8rem;"><div class="contest-progress-bar-fill" id="cbar-${mi}" style="width:${monthPct}%"></div></div>
+      <div class="contest-progress-label" style="margin-top:-0.6rem; margin-bottom:0.8rem;"><span id="cstat-${mi}">${monthDone}/${month.items.length} done</span><span id="cpct-${mi}" style="color:var(--green);">${monthPct}%</span></div>`;
 
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) userState = JSON.parse(raw);
-      } catch (e) { console.error("LocalStorage read error", e); }
-    }
+    month.items.forEach((item, ci) => {
+      const tid = `contest_${mi}_${ci}`;
+      const done = userState[tid] ? 'done' : '';
+      const checked = userState[tid] ? 'checked' : '';
+      html += `<div class="contest-item ${done}" id="citem-${tid}" onclick="toggleContest('${tid}',${mi})">
+        <input type="checkbox" class="contest-cb" id="ccb-${tid}" ${checked} onclick="event.stopPropagation(); toggleContest('${tid}',${mi})">
+        <a class="badge-platform plt-${item.plt}" href="${PLT_URLS[item.plt]}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${PLT_NAMES[item.plt]}</a>
+        <span class="contest-date">${item.date}</span>
+        <span class="contest-label">${item.label}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
 
-    function saveState() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(userState)); } catch (e) { console.error("LocalStorage write error", e); }
-    }
+  html += `</div></div>`;
+  return html;
+}
 
-    // =====================================================================
-    // RENDER
-    // =====================================================================
-    function renderUI() {
-      const tabsEl = document.getElementById('tabs');
-      const mainEl = document.getElementById('main-content');
+function toggleContest(tid, monthIdx) {
+  userState[tid] = !userState[tid];
+  saveState();
+  const cb = document.getElementById('ccb-' + tid);
+  const item = document.getElementById('citem-' + tid);
+  if (cb) cb.checked = userState[tid];
+  if (item) { userState[tid] ? item.classList.add('done') : item.classList.remove('done'); }
+  updateContestProgress();
+  updateProgress();
+}
 
-      function makeTab(id, label, isActive) {
-        const btn = document.createElement('button');
-        btn.className = 'tab-btn' + (isActive ? ' active' : '');
-        btn.id = 'tab-btn-' + id;
-        btn.innerHTML = label;
-        btn.addEventListener('click', () => switchTab(id));
-        tabsEl.appendChild(btn);
-      }
+function updateContestProgress() {
+  let globalDone = 0;
+  CONTESTS_DATA.forEach((month, mi) => {
+    let done = 0;
+    month.items.forEach((_, ci) => { if (userState[`contest_${mi}_${ci}`]) { done++; globalDone++; } });
+    const pct = Math.round((done / month.items.length) * 100);
+    const bar = document.getElementById('cbar-' + mi);
+    const stat = document.getElementById('cstat-' + mi);
+    const cpct = document.getElementById('cpct-' + mi);
+    if (bar) bar.style.width = pct + '%';
+    if (stat) stat.innerText = `${done}/${month.items.length} done`;
+    if (cpct) cpct.innerText = pct + '%';
+  });
+  const total = CONTEST_IDS.length;
+  const gPct = total ? Math.round((globalDone / total) * 100) : 0;
+  const gBar = document.getElementById('contest-global-bar');
+  const gPctEl = document.getElementById('contest-global-pct');
+  if (gBar) gBar.style.width = gPct + '%';
+  if (gPctEl) gPctEl.innerText = gPct + '%';
+  // Update tab label
+  const tabProg = document.getElementById('tab-prog-contests');
+  if (tabProg) tabProg.innerText = gPct + '%';
+}
 
-      makeTab('blueprint', '<span class="tab-icon">🎯</span> Strategic Blueprint', true);
-      makeTab('contests', '<span class="tab-icon">🏆</span> Contest Radar', false);
+// =====================================================================
+// STATE MANAGEMENT
+// =====================================================================
+const STORAGE_KEY = 'praneel_placement_v4_tracker';
+let userState = {};
 
-      mainEl.insertAdjacentHTML('beforeend', BLUEPRINT_HTML);
-      mainEl.insertAdjacentHTML('beforeend', CONTESTS_HTML);
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) userState = JSON.parse(raw);
+  } catch(e) { console.error("LocalStorage read error", e); }
+}
 
-      DATA.forEach((weekData, wIndex) => {
-        makeTab('w' + wIndex,
-          `WEEK ${weekData.week} <span class="tab-progress" id="tab-prog-${wIndex}">0%</span>`,
-          false);
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(userState)); } catch(e) { console.error("LocalStorage write error", e); }
+}
 
-        const panel = document.createElement('div');
-        panel.className = 'content-panel';
-        panel.id = 'panel-w' + wIndex;
+// =====================================================================
+// RENDER
+// =====================================================================
+function renderUI() {
+  const tabsEl  = document.getElementById('tabs');
+  const mainEl  = document.getElementById('main-content');
 
-        let html = `
+  function makeTab(id, label, isActive) {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (isActive ? ' active' : '');
+    btn.id = 'tab-btn-' + id;
+    btn.innerHTML = label;
+    btn.addEventListener('click', () => switchTab(id));
+    tabsEl.appendChild(btn);
+  }
+
+  makeTab('blueprint', '<span class="tab-icon">🎯</span> Strategic Blueprint', true);
+  makeTab('contests',  `<span class="tab-icon">🏆</span> Contest Radar <span class="tab-progress" id="tab-prog-contests">0%</span>`, false);
+
+  mainEl.insertAdjacentHTML('beforeend', BLUEPRINT_HTML);
+  mainEl.insertAdjacentHTML('beforeend', buildContestsHTML());
+
+  DATA.forEach((weekData, wIndex) => {
+    makeTab('w' + wIndex,
+      `WEEK ${weekData.week} <span class="tab-progress" id="tab-prog-${wIndex}">0%</span>`,
+      false);
+
+    const panel = document.createElement('div');
+    panel.className = 'content-panel';
+    panel.id = 'panel-w' + wIndex;
+
+    let html = `
       <div class="week-header">
         <div style="flex:1;">
           <div class="week-title">WEEK ${weekData.week}: ${weekData.title}</div>
@@ -1391,9 +731,9 @@
         </div>
       </div>`;
 
-        weekData.days.forEach(day => {
-          const total = (day.m?.length || 0) + (day.a?.length || 0) + (day.e?.length || 0);
-          html += `
+    weekData.days.forEach(day => {
+      const total = (day.m?.length||0) + (day.a?.length||0) + (day.e?.length||0);
+      html += `
         <div class="day-card" id="card-${day.d}">
           <div class="day-header" onclick="toggleDay(${day.d})">
             <div class="day-number">D${day.d}</div>
@@ -1404,146 +744,146 @@
                 <span>${total} Tasks</span>
               </div>
             </div>
-            <div class="day-badge" style="border-color:var(--border);color:var(--text);">${day.badge || ''}</div>
+            <div class="day-badge" style="border-color:var(--border);color:var(--text);">${day.badge||''}</div>
             <div class="day-progress" id="day-prog-${day.d}">0%</div>
             <div class="day-chevron">▼</div>
           </div>
           <div class="day-body" id="body-${day.d}">
             ${day.tip ? `<div class="day-tip"><strong>💡 STRATEGY:</strong> ${day.tip}</div>` : ''}
-            ${renderSection(day.m, '☀️ MORNING', day.d, 'm')}
+            ${renderSection(day.m, '☀️ MORNING',   day.d, 'm')}
             ${renderSection(day.a, '⚡ AFTERNOON', day.d, 'a')}
-            ${renderSection(day.e, '🌙 EVENING', day.d, 'e')}
+            ${renderSection(day.e, '🌙 EVENING',   day.d, 'e')}
           </div>
         </div>`;
-        });
+    });
 
-        panel.innerHTML = html;
-        mainEl.appendChild(panel);
-      });
-    }
+    panel.innerHTML = html;
+    mainEl.appendChild(panel);
+  });
+}
 
-    function renderSection(items, title, dayId, sec) {
-      if (!items || !items.length) return '';
-      const cls = sec === 'm' ? 'morning' : sec === 'a' ? 'afternoon' : 'evening';
-      let html = `<div class="section ${cls}"><div class="section-header"><div class="section-title">${title}</div></div>`;
-      items.forEach((task, i) => {
-        const tid = `d${dayId}_${sec}_${i}`;
-        const checked = userState[tid] ? 'checked' : '';
-        const done = userState[tid] ? 'done' : '';
-        html += `
+function renderSection(items, title, dayId, sec) {
+  if (!items || !items.length) return '';
+  const cls = sec === 'm' ? 'morning' : sec === 'a' ? 'afternoon' : 'evening';
+  let html = `<div class="section ${cls}"><div class="section-header"><div class="section-title">${title}</div></div>`;
+  items.forEach((task, i) => {
+    const tid = `d${dayId}_${sec}_${i}`;
+    const checked = userState[tid] ? 'checked' : '';
+    const done    = userState[tid] ? 'done'    : '';
+    html += `
       <div class="task-item ${done}" id="item-${tid}" onclick="toggleTask('${tid}')">
         <input type="checkbox" class="task-cb" id="cb-${tid}" ${checked}
                onclick="event.stopPropagation(); toggleTask('${tid}')">
         <span class="task-label">${task.t}</span>
         <span class="task-type type-${task.type.toLowerCase()}">${task.type.toUpperCase()}</span>
       </div>`;
-      });
-      return html + '</div>';
-    }
+  });
+  return html + '</div>';
+}
 
-    // =====================================================================
-    // INTERACTIONS
-    // =====================================================================
-    function toggleDay(dayId) {
-      document.getElementById('card-' + dayId).classList.toggle('open');
-    }
+// =====================================================================
+// INTERACTIONS
+// =====================================================================
+function toggleDay(dayId) {
+  document.getElementById('card-' + dayId).classList.toggle('open');
+}
 
-    function toggleTask(taskId) {
-      userState[taskId] = !userState[taskId];
-      saveState();
+function toggleTask(taskId) {
+  userState[taskId] = !userState[taskId];
+  saveState();
 
-      const cb = document.getElementById('cb-' + taskId);
-      const item = document.getElementById('item-' + taskId);
-      if (cb) cb.checked = userState[taskId];
-      if (item) {
-        if (userState[taskId]) item.classList.add('done');
-        else item.classList.remove('done');
-      }
-      updateProgress();
-    }
+  const cb   = document.getElementById('cb-'   + taskId);
+  const item = document.getElementById('item-' + taskId);
+  if (cb)   cb.checked = userState[taskId];
+  if (item) {
+    if (userState[taskId]) item.classList.add('done');
+    else                   item.classList.remove('done');
+  }
+  updateProgress();
+}
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('tab-btn-' + tabId).classList.add('active');
-      document.getElementById('panel-' + tabId).classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-btn-' + tabId).classList.add('active');
+  document.getElementById('panel-'   + tabId).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-    function updateProgress() {
-      let globalDone = 0, globalTotal = 0, daysCompleted = 0;
+function updateProgress() {
+  let globalDone = 0, globalTotal = 0, daysCompleted = 0;
 
-      DATA.forEach((weekData, wIndex) => {
-        let weekDone = 0, weekTotal = 0;
+  DATA.forEach((weekData, wIndex) => {
+    let weekDone = 0, weekTotal = 0;
 
-        weekData.days.forEach(day => {
-          let dayDone = 0, dayTotal = 0;
-          [['m', day.m], ['a', day.a], ['e', day.e]].forEach(([sec, items]) => {
-            if (!items) return;
-            items.forEach((_, i) => {
-              dayTotal++; weekTotal++; globalTotal++;
-              if (userState[`d${day.d}_${sec}_${i}`]) { dayDone++; weekDone++; globalDone++; }
-            });
-          });
-
-          const pct = dayTotal ? Math.round((dayDone / dayTotal) * 100) : 0;
-          const progEl = document.getElementById('day-prog-' + day.d);
-          const cardEl = document.getElementById('card-' + day.d);
-          if (progEl) progEl.innerText = pct + '%';
-          if (cardEl) {
-            if (pct === 100 && dayTotal > 0) { cardEl.classList.add('completed'); daysCompleted++; }
-            else cardEl.classList.remove('completed');
-          }
+    weekData.days.forEach(day => {
+      let dayDone = 0, dayTotal = 0;
+      [['m', day.m], ['a', day.a], ['e', day.e]].forEach(([sec, items]) => {
+        if (!items) return;
+        items.forEach((_, i) => {
+          dayTotal++; weekTotal++; globalTotal++;
+          if (userState[`d${day.d}_${sec}_${i}`]) { dayDone++; weekDone++; globalDone++; }
         });
-
-        const wPct = weekTotal ? Math.round((weekDone / weekTotal) * 100) : 0;
-        const tabProg = document.getElementById('tab-prog-' + wIndex);
-        if (tabProg) tabProg.innerText = wPct + '%';
       });
 
-      const gPct = globalTotal ? Math.round((globalDone / globalTotal) * 100) : 0;
-      document.getElementById('overall-pct').innerText = gPct + '%';
-      document.getElementById('overall-bar').style.width = gPct + '%';
-      document.getElementById('stat-done').innerText = globalDone;
-      document.getElementById('stat-total').innerText = globalTotal;
-      document.getElementById('stat-days').innerText = daysCompleted;
-    }
-
-    // =====================================================================
-    // DATA PORTABILITY
-    // =====================================================================
-    window.exportProgress = function () {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw || raw === '{}') { alert('No progress to export yet!'); return; }
-      const b64 = btoa(raw);
-      navigator.clipboard.writeText(b64)
-        .then(() => alert('🚀 Progress copied to clipboard! Paste this on your other device.'))
-        .catch(() => prompt('Copy this progress code manually:', b64));
-    };
-
-    window.importProgress = function () {
-      const code = prompt('Paste your backup progress code here:');
-      if (!code) return;
-      try {
-        const decoded = atob(code.trim());
-        JSON.parse(decoded);
-        localStorage.setItem(STORAGE_KEY, decoded);
-        alert('⚡ Progress synced successfully!');
-        window.location.reload();
-      } catch (e) {
-        alert('❌ Invalid sync code. Please try again.');
+      const pct = dayTotal ? Math.round((dayDone / dayTotal) * 100) : 0;
+      const progEl = document.getElementById('day-prog-' + day.d);
+      const cardEl = document.getElementById('card-'     + day.d);
+      if (progEl) progEl.innerText = pct + '%';
+      if (cardEl) {
+        if (pct === 100 && dayTotal > 0) { cardEl.classList.add('completed'); daysCompleted++; }
+        else                               cardEl.classList.remove('completed');
       }
-    };
-
-    // =====================================================================
-    // BOOT
-    // =====================================================================
-    window.addEventListener('DOMContentLoaded', () => {
-      loadState();
-      renderUI();
-      updateProgress();
     });
-  </script>
-</body>
 
+    const wPct = weekTotal ? Math.round((weekDone / weekTotal) * 100) : 0;
+    const tabProg = document.getElementById('tab-prog-' + wIndex);
+    if (tabProg) tabProg.innerText = wPct + '%';
+  });
+
+  const gPct = globalTotal ? Math.round((globalDone / globalTotal) * 100) : 0;
+  document.getElementById('overall-pct').innerText  = gPct + '%';
+  document.getElementById('overall-bar').style.width = gPct + '%';
+  document.getElementById('stat-done').innerText    = globalDone;
+  document.getElementById('stat-total').innerText   = globalTotal;
+  document.getElementById('stat-days').innerText    = daysCompleted;
+}
+
+// =====================================================================
+// DATA PORTABILITY
+// =====================================================================
+window.exportProgress = function() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw || raw === '{}') { alert('No progress to export yet!'); return; }
+  const b64 = btoa(raw);
+  navigator.clipboard.writeText(b64)
+    .then(() => alert('🚀 Progress copied to clipboard! Paste this on your other device.'))
+    .catch(() => prompt('Copy this progress code manually:', b64));
+};
+
+window.importProgress = function() {
+  const code = prompt('Paste your backup progress code here:');
+  if (!code) return;
+  try {
+    const decoded = atob(code.trim());
+    JSON.parse(decoded);
+    localStorage.setItem(STORAGE_KEY, decoded);
+    alert('⚡ Progress synced successfully!');
+    window.location.reload();
+  } catch(e) {
+    alert('❌ Invalid sync code. Please try again.');
+  }
+};
+
+// =====================================================================
+// BOOT
+// =====================================================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  renderUI();
+  updateProgress();
+  updateContestProgress();
+});
+</script>
+</body>
 </html>
