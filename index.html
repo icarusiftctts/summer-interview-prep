@@ -38,11 +38,12 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
 .progress-label span:last-child { color: var(--yellow); font-size: 1.2rem; }
 .progress-bar-bg { background: #1a1f45; border-radius: 12px; height: 24px; overflow: hidden; border: 2px solid var(--border); }
 .progress-bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--blue), var(--green)); transition: width 0.5s ease; }
-.stats-row { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+.stats-row { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; }
 .stat-pill { background: rgba(255,255,255,0.08); border: 2px solid var(--border); border-radius: 30px; padding: 0.5rem 1.2rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; color: var(--text); font-weight: 600; display:flex; align-items:center; gap:0.5rem;}
 .stat-pill span { color: var(--green); font-weight: 700; font-size: 1.1rem; }
 .btn-action { cursor: pointer; transition: transform 0.2s; }
 .btn-action:hover { transform: scale(1.05); }
+.auth-controls { display: flex; gap: 1rem; margin-left: auto; }
 
 /* ===== TABS ===== */
 .tabs-container { background: var(--card); border-bottom: 3px solid var(--border); padding: 0 2rem; overflow-x: auto; position: sticky; top: 0; z-index: 90;}
@@ -154,6 +155,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
   .tabs-container { padding: 0 1rem; }
   .main { padding: 1rem; }
   .day-header { flex-wrap: wrap; }
+  .auth-controls { margin-left: 0; width: 100%; margin-top: 1rem;}
 }
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
@@ -167,7 +169,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
   <div class="header-top">
     <div>
       <h1>⚡ TIER-1 PLACEMENT &amp; MBB TRAJECTORY PLANNER</h1>
-      <p>// 61 Days | Github Company-Wise Integration | LocalStorage Enabled</p>
+      <p>// 61 Days | Github Company-Wise Integration | Cloud Sync Enabled</p>
     </div>
   </div>
   <div class="overall-progress">
@@ -182,8 +184,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
   <div class="stats-row">
     <div class="stat-pill">Tasks: <span id="stat-done">0</span> / <span id="stat-total">0</span></div>
     <div class="stat-pill">Days Conquered: <span id="stat-days">0</span> / 61</div>
-    <button onclick="exportProgress()" class="stat-pill btn-action" style="background:var(--blue); color:#000; border:none;">📤 Backup State</button>
-    <button onclick="importProgress()" class="stat-pill btn-action" style="background:var(--orange); color:#000; border:none;">📥 Sync State</button>
+    
+    <div class="auth-controls">
+      <button id="login-btn" onclick="window.login()" class="stat-pill btn-action" style="background:#fff; color:#000; border:none; padding: 0.5rem 1rem;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="height: 14px; margin-right: 8px;">
+        Login to Sync
+      </button>
+      <button id="logout-btn" onclick="window.logout()" class="stat-pill btn-action" style="display:none; background:var(--card2); color:var(--text); border:1px solid var(--border);">Logout</button>
+    </div>
   </div>
 </div>
 
@@ -193,12 +201,110 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
 
 <div class="main" id="main-content"></div>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB0Z48RrwPucIilUWCXhU_uJNPJFKJQqds",
+    authDomain: "summer-planner-e3444.firebaseapp.com",
+    projectId: "summer-planner-e3444",
+    storageBucket: "summer-planner-e3444.firebasestorage.app",
+    messagingSenderId: "589009739460",
+    appId: "1:589009739460:web:2e257b2f89d657f2bc3391",
+    measurementId: "G-Z8BP3G4VC3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  window.currentUid = null;
+
+  window.login = async () => {
+    try { await signInWithPopup(auth, provider); } 
+    catch (error) { console.error("Login failed", error); }
+  };
+  
+  window.logout = async () => {
+    await signOut(auth);
+    window.userState = {};
+    window.updateProgress();
+    window.updateContestProgress();
+    document.querySelectorAll('.task-cb, .contest-cb').forEach(cb => { cb.checked = false; });
+    document.querySelectorAll('.task-item, .contest-item').forEach(el => el.classList.remove('done'));
+  };
+
+  onAuthStateChanged(auth, async (user) => {
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    
+    if (user) {
+      window.currentUid = user.uid;
+      loginBtn.innerHTML = `Synced as ${user.email.split('@')[0]}`;
+      loginBtn.style.background = "var(--green)";
+      logoutBtn.style.display = "inline-flex";
+      await fetchCloudState();
+    } else {
+      window.currentUid = null;
+      loginBtn.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="G" style="height: 14px; margin-right: 8px;">Login to Sync`;
+      loginBtn.style.background = "#fff";
+      logoutBtn.style.display = "none";
+      // Fallback to local storage if present
+      window.loadState(); 
+      window.updateProgress();
+      window.updateContestProgress();
+    }
+  });
+
+  async function fetchCloudState() {
+    if (!window.currentUid) return;
+    const docRef = doc(db, "users", window.currentUid);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists() && docSnap.data().progress) {
+      window.userState = docSnap.data().progress;
+    } else {
+      window.userState = {};
+    }
+    
+    // Sync UI with fetched state
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      const id = cb.id.replace('cb-', '').replace('ccb-', '');
+      const isDone = !!window.userState[id];
+      cb.checked = isDone;
+      const item = cb.closest('.task-item, .contest-item');
+      if (item) { isDone ? item.classList.add('done') : item.classList.remove('done'); }
+    });
+    
+    window.updateProgress();
+    window.updateContestProgress();
+  }
+
+  // Override the saveState function used by the checkboxes
+  window.saveState = async function() {
+    if (!window.currentUid) {
+      // Fallback to localStorage
+      try { localStorage.setItem('praneel_placement_v4_tracker', JSON.stringify(window.userState)); } 
+      catch(e) { console.error("LocalStorage error", e); }
+      return; 
+    }
+    // Async save to Firestore
+    setDoc(doc(db, "users", window.currentUid), {
+      progress: window.userState,
+      lastUpdated: new Date()
+    }, { merge: true }).catch(err => console.error("Cloud Sync failed", err));
+  };
+</script>
+
 <script>
 // =====================================================================
-// DATE HELPER (Starts May 26, 2026)
+// DATE HELPER
 // =====================================================================
 function getPhysicalDate(dayNumber) {
-  const date = new Date(2026, 4, 26); // Month is 0-indexed; 4 = May
+  const date = new Date(2026, 4, 26); // May 26, 2026
   date.setDate(date.getDate() + (dayNumber - 1));
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
 }
@@ -547,13 +653,11 @@ const BLUEPRINT_HTML = `
 </div>`;
 
 // =====================================================================
-// CONTEST DATA — verified against TLE Eliminators tracker (May 28, 2026)
-// Source: tle-eliminators.com/contest-tracker
+// CONTEST DATA
 // =====================================================================
 const PLT_URLS  = { lc:"https://leetcode.com/contest/", cf:"https://codeforces.com/contests", cc:"https://www.codechef.com/contests" };
 const PLT_NAMES = { lc:"LeetCode", cf:"Codeforces", cc:"CodeChef" };
 
-// Each item: { plt, dateStr (YYYY-MM-DD for sorting/dedup), date (display), label, url? }
 let CONTESTS_DATA = [
   { month:"May 2026", items:[
     { plt:"cf", dateStr:"2026-05-06", date:"May 06 (Wed)", label:"Div 1 + Div 2 Round" },
@@ -610,9 +714,6 @@ function rebuildContestIDs() {
 }
 rebuildContestIDs();
 
-// =====================================================================
-// LIVE CONTEST FETCHING — via kontests.net public API (CORS-enabled)
-// =====================================================================
 const KONTESTS_APIS = [
   { plt:'lc', url:'https://kontests.net/api/v1/leet_code' },
   { plt:'cf', url:'https://kontests.net/api/v1/codeforces' },
@@ -622,18 +723,9 @@ const KONTESTS_APIS = [
 const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-function toDateStr(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-function toDisplayDate(d) {
-  return `${MONTHS_SHORT[d.getMonth()]} ${String(d.getDate()).padStart(2,'0')} (${WEEKDAYS[d.getDay()]})`;
-}
-function toMonthLabel(d) {
-  return `${['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()]} ${d.getFullYear()}`;
-}
-function toMonthShort(d) {
-  return `${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`;
-}
+function toDateStr(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function toDisplayDate(d) { return `${MONTHS_SHORT[d.getMonth()]} ${String(d.getDate()).padStart(2,'0')} (${WEEKDAYS[d.getDay()]})`; }
+function toMonthShort(d) { return `${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`; }
 
 async function fetchLiveContests() {
   const statusEl = document.getElementById('live-fetch-status');
@@ -650,9 +742,7 @@ async function fetchLiveContests() {
         if (isNaN(start)) return;
         fetched.push({ plt: api.plt, dateStr: toDateStr(start), date: toDisplayDate(start), label: c.name, url: c.url });
       });
-    } catch(e) {
-      console.warn('kontests fetch failed for', api.plt, e.message);
-    }
+    } catch(e) { console.warn('kontests fetch failed', e.message); }
   }
 
   if (!fetched.length) {
@@ -660,27 +750,20 @@ async function fetchLiveContests() {
     return;
   }
 
-  // Build a set of existing keys to detect duplicates: "plt|dateStr|labelPrefix"
   const existingKeys = new Set();
-  CONTESTS_DATA.forEach(month => {
-    month.items.forEach(item => {
-      existingKeys.add(`${item.plt}|${item.dateStr}`);
-    });
-  });
+  CONTESTS_DATA.forEach(month => { month.items.forEach(item => { existingKeys.add(`${item.plt}|${item.dateStr}`); }); });
 
   let added = 0;
   fetched.forEach(fc => {
     const key = `${fc.plt}|${fc.dateStr}`;
-    if (existingKeys.has(key)) return; // already present
+    if (existingKeys.has(key)) return; 
     existingKeys.add(key);
 
-    // Find or create the month bucket
     const d = new Date(fc.dateStr + 'T12:00:00');
     const monthLabel = toMonthShort(d);
     let bucket = CONTESTS_DATA.find(m => m.month === monthLabel);
     if (!bucket) {
       bucket = { month: monthLabel, items: [] };
-      // Insert in chronological order
       CONTESTS_DATA.push(bucket);
       CONTESTS_DATA.sort((a, b) => new Date(a.items[0]?.dateStr || a.month) - new Date(b.items[0]?.dateStr || b.month));
     }
@@ -692,13 +775,10 @@ async function fetchLiveContests() {
   if (statusEl) {
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-    statusEl.innerText = added > 0
-      ? `✓ Live sync: +${added} new contest${added>1?'s':''} added (${timeStr})`
-      : `✓ All up to date as of ${timeStr}`;
+    statusEl.innerText = added > 0 ? `✓ Live sync: +${added} new contests (${timeStr})` : `✓ Up to date (${timeStr})`;
     statusEl.style.color = 'var(--green)';
   }
 
-  // Rebuild IDs and re-render contests panel
   rebuildContestIDs();
   const mainEl = document.getElementById('main-content');
   const oldPanel = document.getElementById('panel-contests');
@@ -706,7 +786,7 @@ async function fetchLiveContests() {
   if (oldPanel) oldPanel.remove();
   mainEl.insertAdjacentHTML('beforeend', buildContestsHTML());
   if (wasActive) document.getElementById('panel-contests').classList.add('active');
-  updateContestProgress();
+  window.updateContestProgress();
 }
 
 function buildContestsHTML() {
@@ -714,7 +794,7 @@ function buildContestsHTML() {
   CONTESTS_DATA.forEach((month, mi) => {
     month.items.forEach((_, ci) => {
       totalAll++;
-      if (userState[`contest_${mi}_${ci}`]) totalDone++;
+      if (window.userState[`contest_${mi}_${ci}`]) totalDone++;
     });
   });
   const pct = totalAll ? Math.round((totalDone / totalAll) * 100) : 0;
@@ -724,7 +804,7 @@ function buildContestsHTML() {
     <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;">
       <div>
         <h3 style="color:var(--yellow); font-family:'IBM Plex Mono', monospace;">🏆 CONTEST RADAR</h3>
-        <p style="color:var(--text); font-size:0.82rem; margin-top:0.3rem;">Check off contests you've participated in. Live data synced from LeetCode, Codeforces &amp; CodeChef on page load.</p>
+        <p style="color:var(--text); font-size:0.82rem; margin-top:0.3rem;">Check off contests you've participated in. Live data synced on load.</p>
         <p id="live-fetch-status" style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--yellow); margin-top:0.4rem;">⟳ Syncing live contest data...</p>
       </div>
       <div style="text-align:right; min-width:150px;">
@@ -737,7 +817,7 @@ function buildContestsHTML() {
   <div class="calendar-grid">`;
 
   CONTESTS_DATA.forEach((month, mi) => {
-    const monthDone = month.items.filter((_, ci) => userState[`contest_${mi}_${ci}`]).length;
+    const monthDone = month.items.filter((_, ci) => window.userState[`contest_${mi}_${ci}`]).length;
     const monthPct  = month.items.length ? Math.round((monthDone / month.items.length) * 100) : 0;
     html += `<div class="month-card">
       <h3>${month.month}</h3>
@@ -749,12 +829,12 @@ function buildContestsHTML() {
 
     month.items.forEach((item, ci) => {
       const tid = `contest_${mi}_${ci}`;
-      const done    = userState[tid] ? 'done' : '';
-      const checked = userState[tid] ? 'checked' : '';
+      const done    = window.userState[tid] ? 'done' : '';
+      const checked = window.userState[tid] ? 'checked' : '';
       const liveTag = item.live ? `<span style="font-size:0.65rem; background:rgba(34,255,0,0.2); color:var(--green); border:1px solid var(--green); border-radius:4px; padding:0 4px; margin-left:4px; font-family:'IBM Plex Mono',monospace;">LIVE</span>` : '';
       const href    = item.url || PLT_URLS[item.plt];
-      html += `<div class="contest-item ${done}" id="citem-${tid}" onclick="toggleContest('${tid}',${mi})">
-        <input type="checkbox" class="contest-cb" id="ccb-${tid}" ${checked} onclick="event.stopPropagation(); toggleContest('${tid}',${mi})">
+      html += `<div class="contest-item ${done}" id="citem-${tid}" onclick="window.toggleContest('${tid}',${mi})">
+        <input type="checkbox" class="contest-cb" id="ccb-${tid}" ${checked} onclick="event.stopPropagation(); window.toggleContest('${tid}',${mi})">
         <a class="badge-platform plt-${item.plt}" href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${PLT_NAMES[item.plt]}</a>
         <span class="contest-date">${item.date}</span>
         <span class="contest-label">${item.label}${liveTag}</span>
@@ -762,29 +842,28 @@ function buildContestsHTML() {
     });
     html += `</div>`;
   });
-
   html += `</div></div>`;
   return html;
 }
 
-function toggleContest(tid, monthIdx) {
-  userState[tid] = !userState[tid];
-  saveState();
+window.toggleContest = function(tid, monthIdx) {
+  window.userState[tid] = !window.userState[tid];
+  window.saveState();
   const cb   = document.getElementById('ccb-'   + tid);
   const item = document.getElementById('citem-' + tid);
-  if (cb)   cb.checked = userState[tid];
-  if (item) { userState[tid] ? item.classList.add('done') : item.classList.remove('done'); }
-  updateContestProgress();
-  updateProgress();
+  if (cb)   cb.checked = window.userState[tid];
+  if (item) { window.userState[tid] ? item.classList.add('done') : item.classList.remove('done'); }
+  window.updateContestProgress();
+  window.updateProgress();
 }
 
-function updateContestProgress() {
+window.updateContestProgress = function() {
   let globalDone = 0, globalTotal = 0;
   CONTESTS_DATA.forEach((month, mi) => {
     let done = 0;
     month.items.forEach((_, ci) => {
       globalTotal++;
-      if (userState[`contest_${mi}_${ci}`]) { done++; globalDone++; }
+      if (window.userState[`contest_${mi}_${ci}`]) { done++; globalDone++; }
     });
     const pct  = month.items.length ? Math.round((done / month.items.length) * 100) : 0;
     const bar  = document.getElementById('cbar-'  + mi);
@@ -806,28 +885,22 @@ function updateContestProgress() {
 }
 
 // =====================================================================
-// STATE MANAGEMENT
+// STATE & RENDER
 // =====================================================================
-const STORAGE_KEY = 'praneel_placement_v4_tracker';
-let userState = {};
+window.userState = {};
 
-function loadState() {
+window.loadState = function() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) userState = JSON.parse(raw);
-  } catch(e) { console.error("LocalStorage read error", e); }
+    const raw = localStorage.getItem('praneel_placement_v4_tracker');
+    if (raw) window.userState = JSON.parse(raw);
+  } catch(e) { console.error("LocalStorage error", e); }
 }
 
-function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(userState)); } catch(e) { console.error("LocalStorage write error", e); }
-}
-
-// =====================================================================
-// RENDER
-// =====================================================================
 function renderUI() {
   const tabsEl  = document.getElementById('tabs');
   const mainEl  = document.getElementById('main-content');
+  tabsEl.innerHTML = '';
+  mainEl.innerHTML = '';
 
   function makeTab(id, label, isActive) {
     const btn = document.createElement('button');
@@ -898,12 +971,12 @@ function renderSection(items, title, dayId, sec) {
   let html = `<div class="section ${cls}"><div class="section-header"><div class="section-title">${title}</div></div>`;
   items.forEach((task, i) => {
     const tid = `d${dayId}_${sec}_${i}`;
-    const checked = userState[tid] ? 'checked' : '';
-    const done    = userState[tid] ? 'done'    : '';
+    const checked = window.userState[tid] ? 'checked' : '';
+    const done    = window.userState[tid] ? 'done'    : '';
     html += `
-      <div class="task-item ${done}" id="item-${tid}" onclick="toggleTask('${tid}')">
+      <div class="task-item ${done}" id="item-${tid}" onclick="window.toggleTask('${tid}')">
         <input type="checkbox" class="task-cb" id="cb-${tid}" ${checked}
-               onclick="event.stopPropagation(); toggleTask('${tid}')">
+               onclick="event.stopPropagation(); window.toggleTask('${tid}')">
         <span class="task-label">${task.t}</span>
         <span class="task-type type-${task.type.toLowerCase()}">${task.type.toUpperCase()}</span>
       </div>`;
@@ -911,25 +984,22 @@ function renderSection(items, title, dayId, sec) {
   return html + '</div>';
 }
 
-// =====================================================================
-// INTERACTIONS
-// =====================================================================
 function toggleDay(dayId) {
   document.getElementById('card-' + dayId).classList.toggle('open');
 }
 
-function toggleTask(taskId) {
-  userState[taskId] = !userState[taskId];
-  saveState();
+window.toggleTask = function(taskId) {
+  window.userState[taskId] = !window.userState[taskId];
+  if(window.saveState) window.saveState();
 
   const cb   = document.getElementById('cb-'   + taskId);
   const item = document.getElementById('item-' + taskId);
-  if (cb)   cb.checked = userState[taskId];
+  if (cb)   cb.checked = window.userState[taskId];
   if (item) {
-    if (userState[taskId]) item.classList.add('done');
-    else                   item.classList.remove('done');
+    if (window.userState[taskId]) item.classList.add('done');
+    else                    item.classList.remove('done');
   }
-  updateProgress();
+  window.updateProgress();
 }
 
 function switchTab(tabId) {
@@ -940,7 +1010,7 @@ function switchTab(tabId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function updateProgress() {
+window.updateProgress = function() {
   let globalDone = 0, globalTotal = 0, daysCompleted = 0;
 
   DATA.forEach((weekData, wIndex) => {
@@ -952,7 +1022,7 @@ function updateProgress() {
         if (!items) return;
         items.forEach((_, i) => {
           dayTotal++; weekTotal++; globalTotal++;
-          if (userState[`d${day.d}_${sec}_${i}`]) { dayDone++; weekDone++; globalDone++; }
+          if (window.userState[`d${day.d}_${sec}_${i}`]) { dayDone++; weekDone++; globalDone++; }
         });
       });
 
@@ -979,40 +1049,13 @@ function updateProgress() {
   document.getElementById('stat-days').innerText    = daysCompleted;
 }
 
-// =====================================================================
-// DATA PORTABILITY
-// =====================================================================
-window.exportProgress = function() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw || raw === '{}') { alert('No progress to export yet!'); return; }
-  const b64 = btoa(raw);
-  navigator.clipboard.writeText(b64)
-    .then(() => alert('🚀 Progress copied to clipboard! Paste this on your other device.'))
-    .catch(() => prompt('Copy this progress code manually:', b64));
-};
-
-window.importProgress = function() {
-  const code = prompt('Paste your backup progress code here:');
-  if (!code) return;
-  try {
-    const decoded = atob(code.trim());
-    JSON.parse(decoded);
-    localStorage.setItem(STORAGE_KEY, decoded);
-    alert('⚡ Progress synced successfully!');
-    window.location.reload();
-  } catch(e) {
-    alert('❌ Invalid sync code. Please try again.');
-  }
-};
-
-// =====================================================================
 // BOOT
-// =====================================================================
 window.addEventListener('DOMContentLoaded', () => {
-  loadState();
+  window.loadState();
   renderUI();
-  updateProgress();
-  updateContestProgress();
+  window.updateProgress();
+  window.updateContestProgress();
+  fetchLiveContests();
 });
 </script>
 </body>
