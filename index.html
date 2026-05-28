@@ -245,6 +245,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
   window.logout = async () => {
     await signOut(auth);
     window.userState = {};
+    try { localStorage.removeItem('praneel_placement_v4_tracker'); } catch(e) {}
     window.updateProgress();
     window.updateContestProgress();
     document.querySelectorAll('.task-cb, .contest-cb').forEach(cb => { cb.checked = false; });
@@ -275,19 +276,23 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
     }
   });
 
-  async function fetchCloudState() {
+ async function fetchCloudState() {
     if (!window.currentUid) return;
-    
-    // Read from the assigned document ID
-    const docRef = doc(db, "users", getTargetDocId());
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists() && docSnap.data().progress) {
-      window.userState = docSnap.data().progress;
-    } else {
-      window.userState = {};
+    try {
+      const docRef = doc(db, "users", getTargetDocId());
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists() && docSnap.data().progress) {
+        window.userState = docSnap.data().progress;
+        // Keep localStorage in sync with the authoritative cloud state
+        try { localStorage.setItem('praneel_placement_v4_tracker', JSON.stringify(window.userState)); }
+        catch(e) {}
+      }
+      // If doc doesn't exist, keep whatever loadState() already set — don't wipe it
+    } catch(err) {
+      console.error("Cloud fetch failed, using local state:", err);
     }
-    
+
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
       const id = cb.id.replace('cb-', '').replace('ccb-', '');
       const isDone = !!window.userState[id];
@@ -295,24 +300,29 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
       const item = cb.closest('.task-item, .contest-item');
       if (item) { isDone ? item.classList.add('done') : item.classList.remove('done'); }
     });
-    
+
     window.updateProgress();
     window.updateContestProgress();
   }
 
-  window.saveState = async function() {
-    if (!window.currentUid) {
-      try { localStorage.setItem('praneel_placement_v4_tracker', JSON.stringify(window.userState)); } 
-      catch(e) { console.error("LocalStorage error", e); }
-      return; 
-    }
-    
-    // Write to the assigned document ID
+  
+  let _saveTimer = null;
+window.saveState = function() {
+  // Always keep localStorage in sync — provides instant state on refresh
+  try { localStorage.setItem('praneel_placement_v4_tracker', JSON.stringify(window.userState)); }
+  catch(e) { console.error("LocalStorage error", e); }
+
+  if (!window.currentUid) return; // Not logged in — localStorage is enough
+
+  // Debounced Firestore write (avoids spamming DB on rapid toggles)
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => {
     setDoc(doc(db, "users", getTargetDocId()), {
       progress: window.userState,
       lastUpdated: new Date()
     }, { merge: true }).catch(err => console.error("Cloud Sync failed", err));
-  };
+  }, 1200);
+};
 </script>
 
 <script>
@@ -323,6 +333,14 @@ function getPhysicalDate(dayNumber) {
   const date = new Date(2026, 4, 26); // May 26, 2026
   date.setDate(date.getDate() + (dayNumber - 1));
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', weekday: 'short' });
+}
+  function getTodayDayNumber() {
+  const start = new Date(2026, 4, 26);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  start.setHours(0, 0, 0, 0);
+  const diff = Math.floor((today - start) / 86400000) + 1;
+  return (diff >= 1 && diff <= 61) ? diff : null;
 }
 
 // =====================================================================
@@ -359,7 +377,7 @@ const DATA = [
       { d:7, title:"MOCK & CERT: The HackerRank Gauntlet", tip:"First simulation. Consolidate your existing certs and clear any remaining ones.", badge:"🔥 MOCK",
         m:[{t:"Review all templates: Sliding window, Binary Search, Prefix Sum.",type:"study"}],
         a:[{t:"MOCK Q1: Subarray Sums (Medium)",type:"mock"},{t:"MOCK Q2: Matrix Spiral Traversal (Medium)",type:"mock"},{t:"MOCK Q3: Binary Search on Answer (Hard)",type:"mock"}],
-        e:[{t:"CERTIFICATION: Audit your 4 existing HackerRank certs. Take any missing ones (e.g., Advanced SQL, REST API) and link them to your CV.",type:"lc"}, {t:"Analyze mock failures. Which question took > 30 mins?",type:"study"}]}
+        e:[{t:"CERTIFICATION: Audit your 4 existing HackerRank certs. Take any missing ones (e.g., Advanced SQL, REST API) and link them to your CV.",type:"core"}, {t:"Analyze mock failures. Which question took > 30 mins?",type:"study"}]}
     ]
   },
   {
@@ -721,14 +739,6 @@ let CONTESTS_DATA = [
   ]}
 ];
 
-let CONTEST_IDS = [];
-function rebuildContestIDs() {
-  CONTEST_IDS = [];
-  CONTESTS_DATA.forEach((month, mi) => {
-    month.items.forEach((_, ci) => CONTEST_IDS.push(`contest_${mi}_${ci}`));
-  });
-}
-rebuildContestIDs();
 
 const KONTESTS_APIS = [
   { plt:'lc', url:'https://kontests.net/api/v1/leet_code' },
@@ -750,7 +760,10 @@ async function fetchLiveContests() {
   let fetched = [];
   for (const api of KONTESTS_APIS) {
     try {
-      const res = await fetch(api.url, { signal: AbortSignal.timeout(6000) });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const res = await fetch(api.url, { signal: controller.signal });
+clearTimeout(timeoutId);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       data.forEach(c => {
@@ -759,7 +772,7 @@ async function fetchLiveContests() {
         fetched.push({ plt: api.plt, dateStr: toDateStr(start), date: toDisplayDate(start), label: c.name, url: c.url });
       });
     } catch(e) { console.warn('kontests fetch failed', e.message); }
-  }
+  }  
 
   if (!fetched.length) {
     if (statusEl) { statusEl.innerText = '⚠ Live fetch failed — showing cached data'; statusEl.style.color = 'var(--red)'; }
@@ -788,20 +801,28 @@ async function fetchLiveContests() {
     added++;
   });
 
-  if (statusEl) {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-    statusEl.innerText = added > 0 ? `✓ Live sync: +${added} new contests (${timeStr})` : `✓ Up to date (${timeStr})`;
-    statusEl.style.color = 'var(--green)';
-  }
+  const finalMsg = added > 0
+    ? `✓ Live sync: +${added} new contests (${new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })})`
+    : `✓ Up to date (${new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })})`;
 
-  rebuildContestIDs();
   const mainEl = document.getElementById('main-content');
   const oldPanel = document.getElementById('panel-contests');
   const wasActive = oldPanel && oldPanel.classList.contains('active');
+
+  // Re-insert BEFORE week panels to preserve DOM/tab order
+  const weekPanel = document.getElementById('panel-w0');
   if (oldPanel) oldPanel.remove();
-  mainEl.insertAdjacentHTML('beforeend', buildContestsHTML());
+  if (weekPanel) {
+    weekPanel.insertAdjacentHTML('beforebegin', buildContestsHTML());
+  } else {
+    mainEl.insertAdjacentHTML('beforeend', buildContestsHTML());
+  }
   if (wasActive) document.getElementById('panel-contests').classList.add('active');
+
+  // Now update the freshly created status element
+  const newStatusEl = document.getElementById('live-fetch-status');
+  if (newStatusEl) { newStatusEl.innerText = finalMsg; newStatusEl.style.color = 'var(--green)'; }
+
   window.updateContestProgress();
 }
 
@@ -1072,6 +1093,19 @@ window.addEventListener('DOMContentLoaded', () => {
   window.updateProgress();
   window.updateContestProgress();
   fetchLiveContests();
+
+  // Auto-open and scroll to today's day card
+  const todayDay = getTodayDayNumber();
+  if (todayDay) {
+    const card = document.getElementById('card-' + todayDay);
+    if (card) {
+      // Switch to the correct week tab first
+      const weekIndex = DATA.findIndex(w => w.days.some(d => d.d === todayDay));
+      if (weekIndex !== -1) switchTab('w' + weekIndex);
+      card.classList.add('open');
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+  }
 });
 </script>
 </body>
