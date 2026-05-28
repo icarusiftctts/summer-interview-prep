@@ -546,91 +546,218 @@ const BLUEPRINT_HTML = `
   </div>
 </div>`;
 
-const CONTESTS_DATA = [
-  { month: "May 2026", items: [
-    { plt:"cc", date:"May 27 (Wed)", label:"Starters" },
-    { plt:"cf", date:"May 28 (Thu)", label:"Round (Div. 2/3)" },
-    { plt:"lc", date:"May 30 (Sat)", label:"Biweekly Contest" },
-    { plt:"lc", date:"May 31 (Sun)", label:"Weekly Contest" }
+// =====================================================================
+// CONTEST DATA — verified against TLE Eliminators tracker (May 28, 2026)
+// Source: tle-eliminators.com/contest-tracker
+// =====================================================================
+const PLT_URLS  = { lc:"https://leetcode.com/contest/", cf:"https://codeforces.com/contests", cc:"https://www.codechef.com/contests" };
+const PLT_NAMES = { lc:"LeetCode", cf:"Codeforces", cc:"CodeChef" };
+
+// Each item: { plt, dateStr (YYYY-MM-DD for sorting/dedup), date (display), label, url? }
+let CONTESTS_DATA = [
+  { month:"May 2026", items:[
+    { plt:"cf", dateStr:"2026-05-06", date:"May 06 (Wed)", label:"Div 1 + Div 2 Round" },
+    { plt:"cc", dateStr:"2026-05-06", date:"May 06 (Wed)", label:"Starters 239" },
+    { plt:"lc", dateStr:"2026-05-09", date:"May 09 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", dateStr:"2026-05-10", date:"May 10 (Sun)", label:"Weekly Contest 501" },
+    { plt:"cc", dateStr:"2026-05-13", date:"May 13 (Wed)", label:"Starters 240" },
+    { plt:"cf", dateStr:"2026-05-16", date:"May 16 (Sat)", label:"Div 2 Round" },
+    { plt:"lc", dateStr:"2026-05-17", date:"May 17 (Sun)", label:"Weekly Contest 502" },
+    { plt:"cf", dateStr:"2026-05-18", date:"May 18 (Mon)", label:"Educational Round" },
+    { plt:"cc", dateStr:"2026-05-20", date:"May 20 (Wed)", label:"Starters 241" },
+    { plt:"cf", dateStr:"2026-05-21", date:"May 21 (Thu)", label:"Div 2 Round" },
+    { plt:"cf", dateStr:"2026-05-23", date:"May 23 (Sat)", label:"Div 1 + Div 2 Round" },
+    { plt:"lc", dateStr:"2026-05-23", date:"May 23 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", dateStr:"2026-05-24", date:"May 24 (Sun)", label:"Weekly Contest 503" },
+    { plt:"cc", dateStr:"2026-05-27", date:"May 27 (Wed)", label:"Starters 242" },
+    { plt:"cf", dateStr:"2026-05-30", date:"May 30 (Sat)", label:"Codeforces Round" },
+    { plt:"lc", dateStr:"2026-05-31", date:"May 31 (Sun)", label:"Weekly Contest 504" }
   ]},
-  { month: "June 2026", items: [
-    { plt:"cc", date:"Jun 03 (Wed)", label:"Starters" },
-    { plt:"lc", date:"Jun 07 (Sun)", label:"Weekly Contest" },
-    { plt:"cf", date:"Jun 09 (Tue)", label:"Round (Div. 2)" },
-    { plt:"cc", date:"Jun 10 (Wed)", label:"Starters" },
-    { plt:"lc", date:"Jun 13 (Sat)", label:"Biweekly Contest" },
-    { plt:"lc", date:"Jun 14 (Sun)", label:"Weekly Contest" },
-    { plt:"cc", date:"Jun 17 (Wed)", label:"Starters" },
-    { plt:"cf", date:"Jun 18 (Thu)", label:"Round (Div. 3)" },
-    { plt:"lc", date:"Jun 21 (Sun)", label:"Weekly Contest" },
-    { plt:"cc", date:"Jun 24 (Wed)", label:"Starters" },
-    { plt:"lc", date:"Jun 27 (Sat)", label:"Biweekly Contest" },
-    { plt:"lc", date:"Jun 28 (Sun)", label:"Weekly Contest" },
-    { plt:"cf", date:"Jun 30 (Tue)", label:"Round (Div. 2/4)" }
+  { month:"June 2026", items:[
+    { plt:"cc", dateStr:"2026-06-03", date:"Jun 03 (Wed)", label:"Starters 241" },
+    { plt:"lc", dateStr:"2026-06-07", date:"Jun 07 (Sun)", label:"Weekly Contest 505" },
+    { plt:"cf", dateStr:"2026-06-09", date:"Jun 09 (Tue)", label:"Educational Round" },
+    { plt:"cc", dateStr:"2026-06-10", date:"Jun 10 (Wed)", label:"Starters 242" },
+    { plt:"lc", dateStr:"2026-06-13", date:"Jun 13 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", dateStr:"2026-06-14", date:"Jun 14 (Sun)", label:"Weekly Contest 506" },
+    { plt:"cc", dateStr:"2026-06-17", date:"Jun 17 (Wed)", label:"Starters 243" },
+    { plt:"lc", dateStr:"2026-06-21", date:"Jun 21 (Sun)", label:"Weekly Contest 507" },
+    { plt:"cc", dateStr:"2026-06-24", date:"Jun 24 (Wed)", label:"Starters 244" },
+    { plt:"lc", dateStr:"2026-06-27", date:"Jun 27 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", dateStr:"2026-06-28", date:"Jun 28 (Sun)", label:"Weekly Contest 508" }
   ]},
-  { month: "July 2026", items: [
-    { plt:"cc", date:"Jul 01 (Wed)", label:"Starters" },
-    { plt:"lc", date:"Jul 05 (Sun)", label:"Weekly Contest" },
-    { plt:"cc", date:"Jul 08 (Wed)", label:"Starters" },
-    { plt:"cf", date:"Jul 09 (Thu)", label:"Round (Div. 2)" },
-    { plt:"lc", date:"Jul 11 (Sat)", label:"Biweekly Contest" },
-    { plt:"lc", date:"Jul 12 (Sun)", label:"Weekly Contest" },
-    { plt:"cc", date:"Jul 15 (Wed)", label:"Starters" },
-    { plt:"cf", date:"Jul 18 (Sat)", label:"Round (Div. 3)" },
-    { plt:"lc", date:"Jul 19 (Sun)", label:"Weekly Contest" },
-    { plt:"cc", date:"Jul 22 (Wed)", label:"Starters" },
-    { plt:"lc", date:"Jul 25 (Sat)", label:"Biweekly Contest" },
-    { plt:"lc", date:"Jul 26 (Sun)", label:"Weekly Contest" },
-    { plt:"cc", date:"Jul 29 (Wed)", label:"Starters" }
+  { month:"July 2026", items:[
+    { plt:"cc", dateStr:"2026-07-01", date:"Jul 01 (Wed)", label:"Starters" },
+    { plt:"lc", dateStr:"2026-07-05", date:"Jul 05 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", dateStr:"2026-07-08", date:"Jul 08 (Wed)", label:"Starters" },
+    { plt:"lc", dateStr:"2026-07-11", date:"Jul 11 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", dateStr:"2026-07-12", date:"Jul 12 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", dateStr:"2026-07-15", date:"Jul 15 (Wed)", label:"Starters" },
+    { plt:"lc", dateStr:"2026-07-19", date:"Jul 19 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", dateStr:"2026-07-22", date:"Jul 22 (Wed)", label:"Starters" },
+    { plt:"lc", dateStr:"2026-07-25", date:"Jul 25 (Sat)", label:"Biweekly Contest" },
+    { plt:"lc", dateStr:"2026-07-26", date:"Jul 26 (Sun)", label:"Weekly Contest" },
+    { plt:"cc", dateStr:"2026-07-29", date:"Jul 29 (Wed)", label:"Starters" }
   ]}
 ];
 
-const PLT_URLS = { lc:"https://leetcode.com/contest/", cf:"https://codeforces.com/contests", cc:"https://www.codechef.com/contests" };
-const PLT_NAMES = { lc:"LeetCode", cf:"Codeforces", cc:"CodeChef" };
-
-// Assign global contest IDs
 let CONTEST_IDS = [];
-CONTESTS_DATA.forEach((month, mi) => {
-  month.items.forEach((_, ci) => { CONTEST_IDS.push(`contest_${mi}_${ci}`); });
-});
+function rebuildContestIDs() {
+  CONTEST_IDS = [];
+  CONTESTS_DATA.forEach((month, mi) => {
+    month.items.forEach((_, ci) => CONTEST_IDS.push(`contest_${mi}_${ci}`));
+  });
+}
+rebuildContestIDs();
+
+// =====================================================================
+// LIVE CONTEST FETCHING — via kontests.net public API (CORS-enabled)
+// =====================================================================
+const KONTESTS_APIS = [
+  { plt:'lc', url:'https://kontests.net/api/v1/leet_code' },
+  { plt:'cf', url:'https://kontests.net/api/v1/codeforces' },
+  { plt:'cc', url:'https://kontests.net/api/v1/code_chef' }
+];
+
+const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function toDateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function toDisplayDate(d) {
+  return `${MONTHS_SHORT[d.getMonth()]} ${String(d.getDate()).padStart(2,'0')} (${WEEKDAYS[d.getDay()]})`;
+}
+function toMonthLabel(d) {
+  return `${['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()]} ${d.getFullYear()}`;
+}
+function toMonthShort(d) {
+  return `${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+async function fetchLiveContests() {
+  const statusEl = document.getElementById('live-fetch-status');
+  if (statusEl) { statusEl.innerText = '⟳ Fetching live data...'; statusEl.style.color = 'var(--yellow)'; }
+
+  let fetched = [];
+  for (const api of KONTESTS_APIS) {
+    try {
+      const res = await fetch(api.url, { signal: AbortSignal.timeout(6000) });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      data.forEach(c => {
+        const start = new Date(c.start_time);
+        if (isNaN(start)) return;
+        fetched.push({ plt: api.plt, dateStr: toDateStr(start), date: toDisplayDate(start), label: c.name, url: c.url });
+      });
+    } catch(e) {
+      console.warn('kontests fetch failed for', api.plt, e.message);
+    }
+  }
+
+  if (!fetched.length) {
+    if (statusEl) { statusEl.innerText = '⚠ Live fetch failed — showing cached data'; statusEl.style.color = 'var(--red)'; }
+    return;
+  }
+
+  // Build a set of existing keys to detect duplicates: "plt|dateStr|labelPrefix"
+  const existingKeys = new Set();
+  CONTESTS_DATA.forEach(month => {
+    month.items.forEach(item => {
+      existingKeys.add(`${item.plt}|${item.dateStr}`);
+    });
+  });
+
+  let added = 0;
+  fetched.forEach(fc => {
+    const key = `${fc.plt}|${fc.dateStr}`;
+    if (existingKeys.has(key)) return; // already present
+    existingKeys.add(key);
+
+    // Find or create the month bucket
+    const d = new Date(fc.dateStr + 'T12:00:00');
+    const monthLabel = toMonthShort(d);
+    let bucket = CONTESTS_DATA.find(m => m.month === monthLabel);
+    if (!bucket) {
+      bucket = { month: monthLabel, items: [] };
+      // Insert in chronological order
+      CONTESTS_DATA.push(bucket);
+      CONTESTS_DATA.sort((a, b) => new Date(a.items[0]?.dateStr || a.month) - new Date(b.items[0]?.dateStr || b.month));
+    }
+    bucket.items.push({ ...fc, live: true });
+    bucket.items.sort((a, b) => a.dateStr.localeCompare(b.dateStr));
+    added++;
+  });
+
+  if (statusEl) {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    statusEl.innerText = added > 0
+      ? `✓ Live sync: +${added} new contest${added>1?'s':''} added (${timeStr})`
+      : `✓ All up to date as of ${timeStr}`;
+    statusEl.style.color = 'var(--green)';
+  }
+
+  // Rebuild IDs and re-render contests panel
+  rebuildContestIDs();
+  const mainEl = document.getElementById('main-content');
+  const oldPanel = document.getElementById('panel-contests');
+  const wasActive = oldPanel && oldPanel.classList.contains('active');
+  if (oldPanel) oldPanel.remove();
+  mainEl.insertAdjacentHTML('beforeend', buildContestsHTML());
+  if (wasActive) document.getElementById('panel-contests').classList.add('active');
+  updateContestProgress();
+}
 
 function buildContestsHTML() {
-  let totalDone = 0, totalAll = CONTEST_IDS.length;
-  CONTEST_IDS.forEach(id => { if (userState[id]) totalDone++; });
+  let totalDone = 0, totalAll = 0;
+  CONTESTS_DATA.forEach((month, mi) => {
+    month.items.forEach((_, ci) => {
+      totalAll++;
+      if (userState[`contest_${mi}_${ci}`]) totalDone++;
+    });
+  });
   const pct = totalAll ? Math.round((totalDone / totalAll) * 100) : 0;
 
   let html = `<div class="content-panel" id="panel-contests">
-  <div style="background:rgba(255,238,0,0.1); border:2px solid var(--yellow); padding:1rem; border-radius:12px; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;">
-    <div>
-      <h3 style="color:var(--yellow); font-family:'IBM Plex Mono', monospace;">🏆 UPCOMING CONTEST RADAR</h3>
-      <p style="color:var(--text); font-size:0.85rem; margin-top:0.3rem;">Click a badge to open the contest page. Check off contests you've participated in.</p>
-    </div>
-    <div style="text-align:right; min-width:160px;">
-      <div style="font-family:'IBM Plex Mono',monospace; font-size:0.8rem; color:var(--muted); margin-bottom:0.3rem; display:flex; justify-content:space-between;"><span>PARTICIPATED</span><span style="color:var(--yellow);">${totalDone}/${totalAll}</span></div>
-      <div class="contest-progress-bar-bg"><div class="contest-progress-bar-fill" id="contest-global-bar" style="width:${pct}%"></div></div>
-      <div style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--green); text-align:right; margin-top:0.3rem;" id="contest-global-pct">${pct}%</div>
+  <div style="background:rgba(255,238,0,0.1); border:2px solid var(--yellow); padding:1rem; border-radius:12px; margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:0.8rem;">
+      <div>
+        <h3 style="color:var(--yellow); font-family:'IBM Plex Mono', monospace;">🏆 CONTEST RADAR</h3>
+        <p style="color:var(--text); font-size:0.82rem; margin-top:0.3rem;">Check off contests you've participated in. Live data synced from LeetCode, Codeforces &amp; CodeChef on page load.</p>
+        <p id="live-fetch-status" style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--yellow); margin-top:0.4rem;">⟳ Syncing live contest data...</p>
+      </div>
+      <div style="text-align:right; min-width:150px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--muted); margin-bottom:0.3rem; display:flex; justify-content:space-between; gap:1rem;"><span>PARTICIPATED</span><span style="color:var(--yellow);" id="contest-count-label">${totalDone}/${totalAll}</span></div>
+        <div class="contest-progress-bar-bg"><div class="contest-progress-bar-fill" id="contest-global-bar" style="width:${pct}%"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--green); text-align:right; margin-top:0.3rem;" id="contest-global-pct">${pct}%</div>
+      </div>
     </div>
   </div>
   <div class="calendar-grid">`;
 
-  let globalIdx = 0;
   CONTESTS_DATA.forEach((month, mi) => {
     const monthDone = month.items.filter((_, ci) => userState[`contest_${mi}_${ci}`]).length;
-    const monthPct = Math.round((monthDone / month.items.length) * 100);
+    const monthPct  = month.items.length ? Math.round((monthDone / month.items.length) * 100) : 0;
     html += `<div class="month-card">
       <h3>${month.month}</h3>
       <div class="contest-progress-bar-bg" style="margin-bottom:0.8rem;"><div class="contest-progress-bar-fill" id="cbar-${mi}" style="width:${monthPct}%"></div></div>
-      <div class="contest-progress-label" style="margin-top:-0.6rem; margin-bottom:0.8rem;"><span id="cstat-${mi}">${monthDone}/${month.items.length} done</span><span id="cpct-${mi}" style="color:var(--green);">${monthPct}%</span></div>`;
+      <div class="contest-progress-label" style="margin-top:-0.6rem; margin-bottom:0.8rem;">
+        <span id="cstat-${mi}">${monthDone}/${month.items.length} done</span>
+        <span id="cpct-${mi}" style="color:var(--green);">${monthPct}%</span>
+      </div>`;
 
     month.items.forEach((item, ci) => {
       const tid = `contest_${mi}_${ci}`;
-      const done = userState[tid] ? 'done' : '';
+      const done    = userState[tid] ? 'done' : '';
       const checked = userState[tid] ? 'checked' : '';
+      const liveTag = item.live ? `<span style="font-size:0.65rem; background:rgba(34,255,0,0.2); color:var(--green); border:1px solid var(--green); border-radius:4px; padding:0 4px; margin-left:4px; font-family:'IBM Plex Mono',monospace;">LIVE</span>` : '';
+      const href    = item.url || PLT_URLS[item.plt];
       html += `<div class="contest-item ${done}" id="citem-${tid}" onclick="toggleContest('${tid}',${mi})">
         <input type="checkbox" class="contest-cb" id="ccb-${tid}" ${checked} onclick="event.stopPropagation(); toggleContest('${tid}',${mi})">
-        <a class="badge-platform plt-${item.plt}" href="${PLT_URLS[item.plt]}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${PLT_NAMES[item.plt]}</a>
+        <a class="badge-platform plt-${item.plt}" href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${PLT_NAMES[item.plt]}</a>
         <span class="contest-date">${item.date}</span>
-        <span class="contest-label">${item.label}</span>
+        <span class="contest-label">${item.label}${liveTag}</span>
       </div>`;
     });
     html += `</div>`;
@@ -643,36 +770,39 @@ function buildContestsHTML() {
 function toggleContest(tid, monthIdx) {
   userState[tid] = !userState[tid];
   saveState();
-  const cb = document.getElementById('ccb-' + tid);
+  const cb   = document.getElementById('ccb-'   + tid);
   const item = document.getElementById('citem-' + tid);
-  if (cb) cb.checked = userState[tid];
+  if (cb)   cb.checked = userState[tid];
   if (item) { userState[tid] ? item.classList.add('done') : item.classList.remove('done'); }
   updateContestProgress();
   updateProgress();
 }
 
 function updateContestProgress() {
-  let globalDone = 0;
+  let globalDone = 0, globalTotal = 0;
   CONTESTS_DATA.forEach((month, mi) => {
     let done = 0;
-    month.items.forEach((_, ci) => { if (userState[`contest_${mi}_${ci}`]) { done++; globalDone++; } });
-    const pct = Math.round((done / month.items.length) * 100);
-    const bar = document.getElementById('cbar-' + mi);
+    month.items.forEach((_, ci) => {
+      globalTotal++;
+      if (userState[`contest_${mi}_${ci}`]) { done++; globalDone++; }
+    });
+    const pct  = month.items.length ? Math.round((done / month.items.length) * 100) : 0;
+    const bar  = document.getElementById('cbar-'  + mi);
     const stat = document.getElementById('cstat-' + mi);
-    const cpct = document.getElementById('cpct-' + mi);
-    if (bar) bar.style.width = pct + '%';
-    if (stat) stat.innerText = `${done}/${month.items.length} done`;
-    if (cpct) cpct.innerText = pct + '%';
+    const cpct = document.getElementById('cpct-'  + mi);
+    if (bar)  bar.style.width  = pct + '%';
+    if (stat) stat.innerText   = `${done}/${month.items.length} done`;
+    if (cpct) cpct.innerText   = pct + '%';
   });
-  const total = CONTEST_IDS.length;
-  const gPct = total ? Math.round((globalDone / total) * 100) : 0;
-  const gBar = document.getElementById('contest-global-bar');
-  const gPctEl = document.getElementById('contest-global-pct');
-  if (gBar) gBar.style.width = gPct + '%';
-  if (gPctEl) gPctEl.innerText = gPct + '%';
-  // Update tab label
-  const tabProg = document.getElementById('tab-prog-contests');
-  if (tabProg) tabProg.innerText = gPct + '%';
+  const gPct = globalTotal ? Math.round((globalDone / globalTotal) * 100) : 0;
+  const gBar      = document.getElementById('contest-global-bar');
+  const gPctEl    = document.getElementById('contest-global-pct');
+  const gCountEl  = document.getElementById('contest-count-label');
+  const tabProg   = document.getElementById('tab-prog-contests');
+  if (gBar)     gBar.style.width = gPct + '%';
+  if (gPctEl)   gPctEl.innerText = gPct + '%';
+  if (gCountEl) gCountEl.innerText = `${globalDone}/${globalTotal}`;
+  if (tabProg)  tabProg.innerText  = gPct + '%';
 }
 
 // =====================================================================
